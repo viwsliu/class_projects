@@ -1,1 +1,1 @@
-Hello World
+This folder contains all projects made by Vincent Liu
