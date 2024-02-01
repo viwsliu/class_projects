@@ -1,0 +1,25 @@
+{
+  "name": "cse186-assignment2",
+  "version": "1.0.0",
+  "description": "CSE186 Assignment 2 - JavsScript I",
+  "author": "David Harrison <dcharris@ucsc.edu>",
+  "license": "UNLICENSED",
+  "repository": "none",
+  "devDependencies": {
+    "bestzip": "*",
+    "eslint": "*",
+    "eslint-config-google": "*",
+    "jest": "*"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "testMatch": [
+      "<rootDir>/*.test.js"
+    ]
+  },
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint *.js",
+    "zip": "bestzip CSE186-Assignment2-Submission.zip *.js"
+  }
+}

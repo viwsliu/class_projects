@@ -1,0 +1,12 @@
+/* Your App styles go here */
+h2{
+    font-size: 30px;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color: navy;
+}
+#stretchstuff{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
