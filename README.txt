@@ -1,1 +1,1 @@
-This folder contains all projects made by Vincent Liu during Highschool (2017-2021)
+This folder contains all projects made by Vincent Liu during Highschool and College (2017-Present)
