@@ -1,0 +1,81 @@
+
+h1 {
+    font-size: 71px;
+}
+
+body {
+  color: rgb(0, 0, 0);
+  font-family: 'Courier New', Courier, monospace;
+    font-size: 20px;
+    line-height: 30px;
+    background: rgb(209, 214, 245);
+}
+
+h2 {
+    font-size: 45px;
+}
+
+.list-text {
+  margin-left: 110px;
+  line-height: 40px;
+}
+
+.line{
+  margin-left: 110px;
+}
+
+.description {
+  height: 5px;
+}
+.nutrition {
+    position:absolute;
+    top: 170px;
+    right: 10px;
+    width: 40%;
+    height: 50%;
+}
+
+.stats {
+    position:absolute;
+    top: 500px;
+    right: 150px;
+    width: 20%;
+}
+
+.center{
+  font-family: 'Courier New', Courier, monospace;
+  box-sizing: border-box;
+}
+
+.center ul {
+  list-style: none;
+  background-color: rgb(248, 242, 255);
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+.center li {
+  display: inline-block;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 25px;
+  line-height: 40px;
+  height: 40px;
+}
+
+.center a {
+  text-decoration: none;
+  width: 80px;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  text-align: center;
+  padding: 60px;
+}
+
+
+
+
+
+.ffcenter{
+  text-align: center;
+}
