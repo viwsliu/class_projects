@@ -1,0 +1,89 @@
+{
+  "name": "cse187-typescript-authenticated-book-example",
+  "version": "1.0.0",
+  "description": "CSE187 TypeScript Authenticated Book Example",
+  "author": "David Harrison <dcharris@ucsc.edu>",
+  "license": "UNLICENSED",
+  "repository": "none",
+  "devDependencies": {
+    "@types/bcrypt": "*",
+    "@types/cors": "*",
+    "@types/express": "*",
+    "@types/jest": "*",
+    "@types/jsonwebtoken": "*",
+    "@types/node": "*",
+    "@types/pg": "*",
+    "@types/supertest": "*",
+    "@types/swagger-ui-express": "*",
+    "concurrently": "*",
+    "eslint": "*",
+    "eslint-config-typescript": "*",
+    "jest": "*",
+    "nodemon": "*",
+    "supertest": "*",
+    "ts-jest": "*",
+    "ts-node": "*",
+    "typescript": "*"
+  },
+  "dependencies": {
+    "bcrypt": "*",
+    "cors": "*",
+    "dotenv": "*",
+    "express": "*",
+    "jsonwebtoken": "*",
+    "swagger-ui-express": "*",
+    "tsoa": "*"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "ts",
+    "exec": "ts-node src/server.ts"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testTimeout": 500,
+    "collectCoverageFrom": [
+      "src/**/*.[jt]s"
+    ],
+    "coveragePathIgnorePatterns": [
+      "src/server.[jt]s",
+      "index.d.ts"
+    ],
+    "testMatch": [
+      "**/?(*.)+(spec|test).[jt]s?(x)"
+    ],
+    "testPathIgnorePatterns": [
+      "/build/",
+      "/node_modules/"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "typescript"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 14
+    },
+    "rules": {
+      "indent": [
+        "warn",
+        2
+      ]
+    }
+  },
+  "scripts": {
+    "prestart": "npm run build",
+    "start": "node dist/src/server.js",
+    "prebuild": "npm run swagger",
+    "build": "tsc",
+    "predev": "npm run swagger",
+    "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec-and-routes\"",
+    "swagger": "tsoa spec-and-routes",
+    "pretest": "npm run swagger",
+    "test": "jest --runInBand --coverage --verbose --forceExit",
+    "lint": "eslint ./src/**/*.[jt]s --fix"
+  }
+}

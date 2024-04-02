@@ -1,0 +1,23 @@
+To install node packages:
+
+  $ npm install
+
+To run the dev server:
+
+  $ npm run dev
+
+To run the 'production' server:
+
+  $ npm start
+
+To view the testing page:
+
+  http://localhost:3010/api/v0/api-docs
+
+To run tests and examine code coverage:
+
+  $ npm test
+
+To run the linter:
+
+  $ npm run lint
