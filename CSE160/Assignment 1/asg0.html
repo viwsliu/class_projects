@@ -14,56 +14,47 @@
 </head>
 <body onload="main()">
 
-<canvas id="asg0" width="400" height="400">
-    Please use a browser that supports "canvas"
-</canvas>
-
+<canvas id="asg0" width="400" height="400"></canvas>
 <br>
-<!-- input button for first vector -->
+
+<!-- step 3: x and y input -->
 <label for="v1">v1:</label>
-<input type="text" id="v1x" name="v1x" required
-       minlength="1" maxlength="8" size="10" placeholder="x">
-<input type="text" id="v1y" name="v1y" required
-       minlength="1" maxlength="8" size="10" placeholder="y">
+<input type="text" id="v1_x" name="v1_x" required
+       size="10" placeholder="x">
+<input type="text" id="v1_y" name="v1_y" required
+       size="10" placeholder="y">
 <br>
-
-<!-- input button for second vector -->
+<!-- x and y input for v2 -->
 <label for="v2">v2:</label>
-<input type="text" id="v2x" name="v2x" required
-       minlength="1" maxlength="8" size="10" placeholder="x">
-<input type="text" id="v2y" name="v2y" required
-       minlength="1" maxlength="8" size="10" placeholder="y">
-<br>
-
-
-<!-- button for drawing -->
+<input type="text" id="v2_x" name="v2_x" required
+       size="10" placeholder="x">
+<input type="text" id="v2_y" name="v2_y" required
+       size="10" placeholder="y">
+<br> 
 <button onclick="handleDrawEvent()">Draw</button>
-<br> <br>
-<!-- button for selection -->
-<label for="operation_selection">Operation: </label>
-<select id="operation_selection">
-    <option value="Add">Add</option>
-    <option value="Subtract">Subtract</option>
-    <option value="Divide">Divide</option>
-    <option value="Multiply">Multiply</option>
-    <option value="Mag">Magnitude</option>
-    <option value="Norm">Normalize</option>
-    <option value="Angle">Angle between</option>
-    <option value="Area">Area</option>
-</select>
-
-<!-- button for scalar -->
-<label for="operation_selection">Scalar: </label>
-<input type="text" id="scalar" name="scalar" required
-       minlength="1" maxlength="8" size="10">
+<br>
 <br>
 
-<!-- Draw 2 Button -->
-<button onclick="handleDrawOperationEvent()">Draw</button>
-
-
-
-
+<!-- operations selection -->
+<label for="operation">Operation </label>
+<select id="operation">
+    <option value="add">Add</option>
+    <option value="subtract">Subtract</option>
+    <option value="divide">Divide</option>
+    <option value="multiply">Multiply</option>
+    <option value="magnitude">Magnitude</option>
+    <option value="norm">Normalize</option>
+    <option value="angle">Angle between</option>
+    <option value="area">Area</option>
+</select>
+<br>
+<label for="operation">Scalar</label>
+<input type="text" id="scalar" name="scalar" required
+       size="10" placeholder="scalar">
+<br>
+<button onclick="handleDrawOperationEvent()">
+       Draw
+</button>
 
 </body>
 </html>
