@@ -9,15 +9,14 @@
 #######################################################################
 */
 
-import {Request} from "express";
+// import {Request} from "../types/";
 import {AuthService} from './authService';
 import {SessionUser} from '../types/';
 
 export function expressAuthentication(
   request: Request,
   securityName: string,
-  scopes?: string[]
+  scopes?: string[],
 ): Promise<SessionUser> {
-  return {"email","name"}
-  // return new AuthService().check(request.headers.authorization, scopes);
+  return new AuthService().check(request.headers.authorization, scopes);
 }
