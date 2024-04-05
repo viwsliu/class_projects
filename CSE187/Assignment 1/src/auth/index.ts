@@ -9,7 +9,8 @@
 #######################################################################
 */
 
-import { UUID } from "crypto"
+
+export type UUID = string;
 
 export interface User {
   id: UUID,
@@ -24,5 +25,6 @@ export interface Credentials {
 }
 
 export interface Authenticated {
-  id: UUID
+  id: UUID,
+  name: string
 }
