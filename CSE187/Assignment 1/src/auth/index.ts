@@ -9,15 +9,20 @@
 #######################################################################
 */
 
-export type SessionUser = {
+import { UUID } from "crypto"
+
+export interface User {
+  id: UUID,
   email: string,
-  name: string
+  name: string,
+  roles: string[]
 }
 
-declare global {
-  namespace Express {
-    export interface Request {
-      user?: SessionUser;
-    }
-  }
+export interface Credentials {
+  email: string,
+  password: string
+}
+
+export interface Authenticated {
+  id: UUID
 }
