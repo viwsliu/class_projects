@@ -26,9 +26,9 @@ export class AuthController extends Controller {
   @Response('401', 'Unauthorised')
   public async login(
     @Body() credentials: Credentials,
-  ): Promise<Authenticated|undefined> {
+  ): Promise<Authenticated|null> {
     return new AuthService().login(credentials)
-      .then(async (user: Authenticated|undefined): Promise<Authenticated|undefined> => {
+      .then(async (user: Authenticated | null): Promise<Authenticated | null> => {
         if (!user) {
           this.setStatus(401);
         }

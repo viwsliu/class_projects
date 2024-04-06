@@ -4,6 +4,8 @@ CREATE TABLE member(id UUID UNIQUE PRIMARY KEY DEFAULT gen_random_uuid(), data j
 
 -- Your schema DDL (create table statements etc.) goes below here 
 
--- posts
--- list of friends 
---  friend requests
+DROP TABLE IF EXISTS posts CASCADE;
+CREATE TABLE posts(id UUID UNIQUE PRIMARY KEY DEFAULT, data jsonb)
+
+DROP TABLE IF EXISTS friends CASCADE
+CREATE TABLE friends(id UUID UNIQUE PRIMARY KEY DEFAULT, data jsonb, data jsonb)
