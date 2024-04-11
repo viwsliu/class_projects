@@ -18,31 +18,35 @@ function handleDrawEvent() {
   board.clearRect(0, 0, 400, 400);
   board.fillStyle = 'black';
   board.fillRect(0, 0, 400, 400);
-  // read the values of the text boxes to create v1 and v2.
+  //get v1 and v2
   let v1_x = document.getElementById('v1_x').value;
   let v1_y = document.getElementById('v1_y').value;
   let v2_x = document.getElementById('v2_x').value;
   let v2_y = document.getElementById('v2_y').value;
   let v1 = new Vector3([v1_x, v1_y, 0.0]);
   let v2 = new Vector3([v2_x, v2_y, 0.0]);
-  // Call drawVector(v1, "red") and drawVector(v2, "blue")
   drawVector(v1, "red");
   drawVector(v2, "blue");
 }
 
 function handleDrawOperationEvent() {
+    // clear the canvas and set bg color to black
+  board.clearRect(0, 0, 400, 400);
+  board.fillStyle = 'black';
+  board.fillRect(0, 0, 400, 400);
+
+  //get v1 and v2
   let v1_x = document.getElementById('v1_x').value;
   let v1_y = document.getElementById('v1_y').value;
   let v2_x = document.getElementById('v2_x').value;
   let v2_y = document.getElementById('v2_y').value;
-  board.clearRect(0, 0, 400, 400);
-  board.fillStyle = 'black';
-  board.fillRect(0, 0, 400, 400);
   let v1 = new Vector3([v1_x, v1_y, 0.0]);
   let v2 = new Vector3([v2_x, v2_y, 0.0]);
-  // Call drawVector(v1, "red") and drawVector(v2, "blue")
+
   drawVector(v1, "red");
   drawVector(v2, "blue");
+
+  //determine operation
   let operation_val = document.getElementById('operation').value;
   let scalarVal = document.getElementById('scalar').value;
   switch (operation_val) {
