@@ -39,6 +39,7 @@ function main() {
     };
     gl_ctx.clearColor(0.0, 0.0, 0.0, 1.0);
     gl_ctx.clear(gl_ctx.COLOR_BUFFER_BIT);
+    
 }
 
 function setupWebGL() { //get the canvas and gl context
@@ -64,6 +65,9 @@ function setup_UI_elements() {
     document.getElementById("clear").onclick = function () {
         g_shapesList = [];
         renderAllShapes();
+    };
+    document.getElementById("draw").onclick = function () {
+        makeDrawing();
     };
     document.getElementById("square_draw").onclick = function () {
         g_selectedType = "square";
@@ -192,4 +196,23 @@ function drawTriangle(p1, p2, p3){
     gl_ctx.vertexAttribPointer(attr_Position, 2, gl_ctx.FLOAT, false, 0, 0);
     gl_ctx.enableVertexAttribArray(attr_Position);
     gl_ctx.drawArrays(gl_ctx.TRIANGLES, 0, 3);
-  }
+}
+
+function makeDrawing() {
+    drawFish([-0.5, 0.5], [1.0, 0.0, 0.5, 1.0], [0.0, 0.0, 0.0, 1.0]);
+    drawFish([0.0, -0.2], [1.0, 0.2, 0.3, 1.0], [0.0, 0.0, 0.0, 1.0]);
+    drawFish([0.4, 0.4], [1.0, 0.5, 0.4, 1.0], [0.0, 0.0, 0.0, 1.0]);
+    drawFish([-0.5, -0.5], [1.0, 0.5, 1.0, 1.0], [0.0, 0.0, 0.0, 1.0]);
+    drawFish([0.5, -0.4], [0.3, 0.3, 1.0, 1.0], [0.0, 0.0, 0.0, 1.0]);
+}
+
+function drawFish(position, bodyColor, eyeColor) {
+    gl_ctx.uniform4fv(unif_FragColor, new Float32Array(bodyColor));
+    drawTriangle([position[0] - 0.3, position[1]], [position[0] + 0.3, position[1]], [position[0], position[1] + 0.2]);
+    drawTriangle([position[0] + 0.3, position[1]], [position[0] + 0.4, position[1] - 0.05], [position[0] + 0.4, position[1] + 0.05]);
+    drawTriangle([position[0] + 0.1, position[1] + 0.1], [position[0] + 0.2, position[1] + 0.15], [position[0] + 0.1, position[1] + 0.2]); 
+    drawTriangle([position[0] - 0.1, position[1]], [position[0] + 0.1, position[1]], [position[0], position[1] - 0.1]); 
+    gl_ctx.uniform4fv(unif_FragColor, new Float32Array(eyeColor));
+    drawTriangle([position[0] - 0.1, position[1] + 0.05], [position[0] - 0.05, position[1] + 0.05], [position[0] - 0.075, position[1] + 0.1]); // Left eye
+}
+    
