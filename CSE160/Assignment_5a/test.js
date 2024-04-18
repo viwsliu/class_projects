@@ -1,148 +1,158 @@
 import * as THREE from 'three';
-import { OrbitControls } from './lib/OrbitControls.js';
-import { OBJLoader } from './lib/OBJLoader.js';
-import { MTLLoader } from './lib/MTLLoader.js';
-
-
-
-
+import {OrbitControls} from './lib/OrbitControls.js';
+import {OBJLoader} from './lib/OBJLoader.js';
+import {MTLLoader} from './lib/MTLLoader.js';
 
 function main() {
     const canvas = document.querySelector('#c');
     const renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(1700, 900);
 
     const fov = 75;
     const aspect = window.innerWidth / window.innerHeight;
     const near = 0.1;
     const far = 1000;
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    camera.position.set(0, 5, 10);
 
+    //camera + control
+    const controls = new OrbitControls(camera, renderer.domElement);
+    camera.position.set(-10, 15, 20);
+    controls.target.set(10, 10, 10);
+    controls.update();
     const scene = new THREE.Scene();
 
-    // 1. Three Different Primary Shapes
-    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
-    const cylinderGeometry = new THREE.CylinderGeometry(1, 1, 2, 32);
+    //primary shapes, color, mesh
+    const cube = new THREE.BoxGeometry(1, 1, 1);
+    const sphere = new THREE.SphereGeometry(1, 32, 32);
+    const cylinder = new THREE.CylinderGeometry(1, 1, 2, 32);
 
     const cubeMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
-    const sphereMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-    const cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x0000ff });
+    const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
+    const cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x0000FF });
 
-    const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    const cylinderMesh = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+    const cubeMesh = new THREE.Mesh(cube, cubeMaterial);
+    const sphereMesh = new THREE.Mesh(sphere, sphereMaterial);
+    const cylinderMesh = new THREE.Mesh(cylinder, cylinderMaterial);
 
-    cubeMesh.position.set(-5, 0, 0);
-    sphereMesh.position.set(0, 0, 0);
-    cylinderMesh.position.set(5, 0, 0);
+    cubeMesh.position.set(0, 5, -5);
+    sphereMesh.position.set(10, 10, 10);
+    cylinderMesh.position.set(0, 5, 30);
 
     scene.add(cubeMesh, sphereMesh, cylinderMesh);
 
-    // 2. Animated Shape
-    function animate() {
+    function animate() {//animated cube
         cubeMesh.rotation.x += 0.01;
         cubeMesh.rotation.y += 0.01;
         requestAnimationFrame(animate);
     }
     animate();
 
-    // 3. Directional Light Source
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0, 1, 0);
-    scene.add(directionalLight);
-
-    // 4. Textured Shape
-    const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load('j.jpg');
+    const textureLoader = new THREE.TextureLoader(); //texture cube
+    const texture = textureLoader.load('/jpg/j.jpg');
     cubeMesh.material.map = texture;
+    
+    // light sources
+    const light_source = new THREE.PointLight(0xFFFFFF, 1, 100); // 0xFFFFFF is white
+    light_source.position.set(10, 10, 10);
+    scene.add(light_source);
 
-    // 5. Custom Textured 3D Model
+    const light_source2 = new THREE.PointLight(0xFF0000, 1, 100); // 0xFFFFFF is white
+    light_source2.position.set(0, 5, -5);
+    scene.add(light_source2);
+
+    const light_source3 = new THREE.PointLight(0x0000FF, 1, 100); // 0xFFFFFF is white
+    light_source3.position.set(0, 0, 30);
+    scene.add(light_source3);
+
+
+    //scooter
     const objLoader = new OBJLoader();
-    objLoader.load('VR-Mobil/model.obj', (root) => {
-		root.position.set(5, 0, 5);
-        scene.add(root);
-    });
-
     const mtlLoader = new MTLLoader();
     mtlLoader.load('VR-Mobil/materials.mtl', (mtl) => {
         mtl.preload();
         objLoader.setMaterials(mtl);
         objLoader.load('VR-Mobil/model.obj', (root) => {
-			root.position.set(5, 0, 5);
+			root.position.set(8, 1.5, 5);
+            root.rotation.y += Math.PI / 2;
 			scene.add(root);
         });
     });
 
-    // 6. Camera Movement with Orbit Controls
-    const controls = new OrbitControls(camera, renderer.domElement);
+    //scooter
+    const objLoader2 = new OBJLoader();
+    const mtlLoader2 = new MTLLoader();
+    mtlLoader2.load('large_building/large_buildingE.mtl', (mtl) => {
+        mtl.preload();
+        objLoader2.setMaterials(mtl);
+        objLoader2.load('large_building/large_buildingE.obj', (root) => {
+			root.position.set(30, 0, 30);
+            root.scale.set(10, 10, 10)
+            root.rotation.y += Math.PI / 2;
+			scene.add(root);
+        });
+    });
 
-    // 7. Three Different Light Sources
-    const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-    pointLight.position.set(0, 10, 0);
-    scene.add(pointLight);
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-
-    // 8. Skybox
+    // skybox?
     const loader = new THREE.CubeTextureLoader();
     const textureCube = loader.load([
-        'j.jpg',
-        'j2.jpg',
-        'j3.jpg',
-        'j4.jpg',
-        'j5.jpg',
-        'j6.jpg'
+        '/jpg/j.jpg'
     ]);
     scene.background = textureCube;
 
-
-
+    function create_dirt(x, y, z) {
+        const dirtcolor = new THREE.MeshBasicMaterial({ color: 0x734A12 });
+        const groundGeometry = new THREE.BoxGeometry(100, 0.1, 100);
+        const groundMesh = new THREE.Mesh(groundGeometry, dirtcolor);
+        groundMesh.position.set(x, y, z);
+        scene.add(groundMesh);
+    }
+    
 	function createRoad(x, y, z) {
-		const roadWidth = 6;
-		const roadLength = 20;
-		const roadHeight = 0.1;
 		const roadMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
-		const roadGeometry = new THREE.BoxGeometry(roadWidth, roadHeight, roadLength);
+		const roadGeometry = new THREE.BoxGeometry(10, 0.1, 95);
 		const roadMesh = new THREE.Mesh(roadGeometry, roadMaterial);
 		roadMesh.position.set(x, y, z);
 		scene.add(roadMesh);
-		const lineGeometry = new THREE.BoxGeometry(0.2, roadHeight, 2);
-		const lineMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 }); // Yellow color
+		const lineGeometry = new THREE.BoxGeometry(0.2, 0.2, 95);
+		const lineMaterial = new THREE.MeshPhongMaterial({ color: 0xFFFF00 }); // Yellow color
 		const line1Mesh = new THREE.Mesh(lineGeometry, lineMaterial);
 		const line2Mesh = new THREE.Mesh(lineGeometry, lineMaterial);
-		line1Mesh.position.set(x, y, z-3);
-		line2Mesh.position.set(x, y, z+3);
+		line1Mesh.position.set(x-0.2, y, z);
+		line2Mesh.position.set(x+0.2, y, z);
 		scene.add(line1Mesh, line2Mesh);
 	}
 	
 	function createTree(x, y, z) {
 		const trunkGeometry = new THREE.CylinderGeometry(0.5, 0.5, 3, 32);
-		const trunkMaterial = new THREE.MeshBasicMaterial({ color: 0x8B4513 });
+		const trunkMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
 		const trunkMesh = new THREE.Mesh(trunkGeometry, trunkMaterial);
 		trunkMesh.position.set(x, y + 1.5, z); // Adjust y position to center the trunk
 		scene.add(trunkMesh);
 	
 		const leavesGeometry = new THREE.ConeGeometry(2, 4, 32);
-		const leavesMaterial = new THREE.MeshBasicMaterial({ color: 0x00FF00 });
+		const leavesMaterial = new THREE.MeshPhongMaterial({ color: 0x00FF00 });
 		const leavesMesh = new THREE.Mesh(leavesGeometry, leavesMaterial);
 		leavesMesh.position.set(x, y + 4, z); // Adjust y position to place leaves on top of the trunk
 		scene.add(leavesMesh);
 	}
 
-	createTree(5,0,5);
-	createTree(-3,0,2);
-	createTree(0,0,-5);
-	createTree(8,0,-3);
+
+
+	createTree(3,0,20);
+	createTree(-1,0,10);
+	createTree(1,0,5);
+	createTree(2,0,15);
 	createTree(-7,0,-4);
-	createTree(4,0,-2);
-	createTree(-6,0,6);
-	createTree(2,0,8);
-	createTree(-9,0,0);
-	createTree(1,0,4);
-	createRoad(10,0,10)
+	createTree(-3,0,-2);
+    createRoad(10,0,10);
+    create_dirt(10,-0.01,10);
+	createTree(20,0,15);
+	createTree(19,0,10);
+	createTree(17,0,-10);
+    createTree(20,0,-25);
+    createTree(20,0,-15);
+
+
 
     function render() {
         renderer.render(scene, camera);
@@ -150,7 +160,4 @@ function main() {
     }
     render();
 }
-
-
-
 main();

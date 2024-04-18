@@ -1,19 +1,16 @@
 import * as THREE from 'three';
-import {OrbitControls} from './lib/OrbitControls.js';
-import {OBJLoader} from './lib/OBJLoader.js';
-import {MTLLoader} from './lib/MTLLoader.js';
-import {GUI} from './lib/lil-gui.module.min.js';
+
 function main() {
 
 	const canvas = document.querySelector( '#c' );
 	const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
 
 	const fov = 90;
-	const aspect = 2; // the canvas default
+	const aspect = 2;
 	const near = 0.1;
-	const far = 100;
+	const far = 5;
 	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-	camera.position.z = 5;
+	camera.position.z = 2;
 
 	const scene = new THREE.Scene();
 	{
@@ -36,11 +33,11 @@ function main() {
 		cube.position.x = x;
 		return cube;
 	}
-	
+
 	const textureLoader = new THREE.TextureLoader();
-	const texture2 = textureLoader.load('j.jpg');
-	const texture3 = textureLoader.load('j3.jpg');
-	const texture4 = textureLoader.load('j4.jpg');
+	const texture2 = textureLoader.load('/jpg/j.jpg');
+	const texture3 = textureLoader.load('/jpg/j3.jpg');
+	const texture4 = textureLoader.load('/jpg/j4.jpg');
 
 	const cubes = [
 		makeInstance( geometry, texture2, 0 ),
@@ -60,20 +57,6 @@ function main() {
 		requestAnimationFrame( render );
 	}
 	requestAnimationFrame( render );
-
-	const objLoader = new OBJLoader();
-	objLoader.load('VR-Mobil/model.obj', (root) => {
-	  scene.add(root);
-	});
-
-	const mtlLoader = new MTLLoader();
-	mtlLoader.load('VR-Mobil/materials.mtl', (mtl) => {
-	  mtl.preload();
-	  objLoader.setMaterials(mtl);
-	  objLoader.load('VR-Mobil/model.obj', (root) => {
-		scene.add(root);
-	  });
-	});
 }
 
 main();
