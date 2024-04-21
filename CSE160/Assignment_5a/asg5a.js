@@ -5,16 +5,15 @@ import {MTLLoader} from './lib/MTLLoader.js';
 
 function main() {
     const canvas = document.querySelector('#c');
-    const renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
+    const renderer = new THREE.WebGLRenderer({ canvas });
     renderer.setSize(1700, 900);
 
     const fov = 75;
-    const aspect = window.innerWidth / window.innerHeight;
+    const aspect = 2;  // the canvas default
     const near = 0.1;
-    const far = 1000;
+    const far = 500;
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
-    //camera + control
     const controls = new OrbitControls(camera, renderer.domElement);
     camera.position.set(-10, 15, 20);
     controls.target.set(10, 10, 10);
@@ -23,19 +22,21 @@ function main() {
 
     //primary shapes, color, mesh
     const cube = new THREE.BoxGeometry(1, 1, 1);
-    const sphere = new THREE.SphereGeometry(1, 32, 32);
-    const cylinder = new THREE.CylinderGeometry(1, 1, 2, 32);
-    const cylinder2 = new THREE.CylinderGeometry(1, 1, 30, 32);
-
     const cubeMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
-    const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
-    const cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x0000FF });
-    const cylinderMaterial2 = new THREE.MeshPhongMaterial({ color: 0x00FFFF });
-    
     const cubeMesh = new THREE.Mesh(cube, cubeMaterial);
+
+    const sphere = new THREE.SphereGeometry(1, 32, 32);
+    const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
     const sphereMesh = new THREE.Mesh(sphere, sphereMaterial);
+
+    const cylinder = new THREE.CylinderGeometry(1, 1, 2, 32);
+    const cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x0000FF });
     const cylinderMesh = new THREE.Mesh(cylinder, cylinderMaterial);
+
+    const cylinder2 = new THREE.CylinderGeometry(1, 1, 30, 32);
+    const cylinderMaterial2 = new THREE.MeshPhongMaterial({ color: 0x00FFFF });
     const cylinderMesh2 = new THREE.Mesh(cylinder2, cylinderMaterial2);
+
 
     cubeMesh.position.set(0, 5, -5);
     sphereMesh.position.set(10, 10, 10);
@@ -43,13 +44,6 @@ function main() {
     cylinderMesh2.position.set(0, 0, 0);
 
     scene.add(cubeMesh, sphereMesh, cylinderMesh, cylinderMesh2);
-
-    function animate() {//animated cube
-        cubeMesh.rotation.x += 0.01;
-        cubeMesh.rotation.y += 0.01;
-        requestAnimationFrame(animate);
-    }
-    animate();
 
     const textureLoader = new THREE.TextureLoader(); //texture cube
     const texture = textureLoader.load('./jpg/j.jpg');
@@ -67,7 +61,6 @@ function main() {
     const light_source3 = new THREE.PointLight(0x0000FF, 1, 100); // 0xFFFFFF is white
     light_source3.position.set(0, 0, 30);
     scene.add(light_source3);
-
 
     //scooter
     const objLoader = new OBJLoader();
@@ -97,9 +90,9 @@ function main() {
     });
 
     function create_dirt(x, y, z) {
-        const dirtcolor = new THREE.MeshBasicMaterial({ color: 0x734A12 });
+        const dirtMaterial = new THREE.MeshBasicMaterial({ color: 0x734A12 });
         const groundGeometry = new THREE.BoxGeometry(100, 0.1, 100);
-        const groundMesh = new THREE.Mesh(groundGeometry, dirtcolor);
+        const groundMesh = new THREE.Mesh(groundGeometry, dirtMaterial);
         groundMesh.position.set(x, y, z);
         scene.add(groundMesh);
     }
@@ -133,8 +126,6 @@ function main() {
 		scene.add(leavesMesh);
 	}
 
-
-
 	createTree(3,0,20);
 	createTree(-1,0,10);
 	createTree(1,0,5);
@@ -149,7 +140,12 @@ function main() {
     createTree(20,0,-25);
     createTree(20,0,-15);
 
-
+    function animate() {//animated cube
+        cubeMesh.rotation.x += 0.01;
+        cubeMesh.rotation.y += 0.01;
+        requestAnimationFrame(animate);
+    }
+    animate();
 
     function render() {
         renderer.render(scene, camera);
