@@ -6,7 +6,6 @@ import {MTLLoader} from './lib/MTLLoader.js';
 function main() {
     const canvas = document.querySelector('#c');
     const renderer = new THREE.WebGLRenderer({ canvas });
-    renderer.setSize(1700, 900);
 
     const fov = 75;
     const aspect = 2;  // the canvas default
@@ -36,7 +35,6 @@ function main() {
     const cylinder2 = new THREE.CylinderGeometry(1, 1, 30, 32);
     const cylinderMaterial2 = new THREE.MeshPhongMaterial({ color: 0x00FFFF });
     const cylinderMesh2 = new THREE.Mesh(cylinder2, cylinderMaterial2);
-
 
     cubeMesh.position.set(0, 5, -5);
     sphereMesh.position.set(10, 10, 10);
@@ -74,7 +72,6 @@ function main() {
 			scene.add(root);
         });
     });
-
     //large_building
     const objLoader2 = new OBJLoader();
     const mtlLoader2 = new MTLLoader();
@@ -89,56 +86,55 @@ function main() {
         });
     });
 
-    function create_dirt(x, y, z) {
-        const dirtMaterial = new THREE.MeshBasicMaterial({ color: 0x734A12 });
-        const groundGeometry = new THREE.BoxGeometry(100, 0.1, 100);
-        const groundMesh = new THREE.Mesh(groundGeometry, dirtMaterial);
+    function ground(x, y, z) {
+        const ground = new THREE.BoxGeometry(100, 0.1, 100);
+        const ground_color = new THREE.MeshBasicMaterial({ color: 0x734A12 });
+        const groundMesh = new THREE.Mesh(ground, ground_color);
         groundMesh.position.set(x, y, z);
         scene.add(groundMesh);
     }
-    
-	function createRoad(x, y, z) {
-		const roadMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
-		const roadGeometry = new THREE.BoxGeometry(10, 0.1, 95);
-		const roadMesh = new THREE.Mesh(roadGeometry, roadMaterial);
+
+	function road(x, y, z) {
+        const road = new THREE.BoxGeometry(10, 0.1, 95);
+		const road_color = new THREE.MeshBasicMaterial({ color: 0x000000 });
+		const roadMesh = new THREE.Mesh(road, road_color);
 		roadMesh.position.set(x, y, z);
 		scene.add(roadMesh);
-		const lineGeometry = new THREE.BoxGeometry(0.2, 0.2, 95);
-		const lineMaterial = new THREE.MeshPhongMaterial({ color: 0xFFFF00 }); // Yellow color
-		const line1Mesh = new THREE.Mesh(lineGeometry, lineMaterial);
-		const line2Mesh = new THREE.Mesh(lineGeometry, lineMaterial);
+		const divider = new THREE.BoxGeometry(0.2, 0.2, 95);
+		const divider_color = new THREE.MeshPhongMaterial({ color: 0xFFFF00 }); // Yellow color
+		const line1Mesh = new THREE.Mesh(divider, divider_color);
+		const line2Mesh = new THREE.Mesh(divider, divider_color);
 		line1Mesh.position.set(x-0.2, y, z);
 		line2Mesh.position.set(x+0.2, y, z);
 		scene.add(line1Mesh, line2Mesh);
 	}
-	
-	function createTree(x, y, z) {
-		const trunkGeometry = new THREE.CylinderGeometry(0.5, 0.5, 3, 32);
-		const trunkMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
-		const trunkMesh = new THREE.Mesh(trunkGeometry, trunkMaterial);
+
+	function tree(x, y, z) {
+		const trunk = new THREE.CylinderGeometry(0.5, 0.5, 3, 32);
+		const trunk_color = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+		const trunkMesh = new THREE.Mesh(trunk, trunk_color);
 		trunkMesh.position.set(x, y + 1.5, z); // Adjust y position to center the trunk
 		scene.add(trunkMesh);
-	
-		const leavesGeometry = new THREE.ConeGeometry(2, 4, 32);
-		const leavesMaterial = new THREE.MeshPhongMaterial({ color: 0x00FF00 });
-		const leavesMesh = new THREE.Mesh(leavesGeometry, leavesMaterial);
+		const leaves = new THREE.ConeGeometry(2, 4, 32);
+		const leaves_color = new THREE.MeshPhongMaterial({ color: 0x00FF00 });
+		const leavesMesh = new THREE.Mesh(leaves, leaves_color);
 		leavesMesh.position.set(x, y + 4, z); // Adjust y position to place leaves on top of the trunk
 		scene.add(leavesMesh);
 	}
 
-	createTree(3,0,20);
-	createTree(-1,0,10);
-	createTree(1,0,5);
-	createTree(2,0,15);
-	createTree(-7,0,-4);
-	createTree(-3,0,-2);
-    createRoad(10,0,10);
-    create_dirt(10,-0.01,10);
-	createTree(20,0,15);
-	createTree(19,0,10);
-	createTree(17,0,-10);
-    createTree(20,0,-25);
-    createTree(20,0,-15);
+	tree(3,0,20);
+	tree(-1,0,10);
+	tree(1,0,5);
+	tree(2,0,15);
+	tree(-7,0,-4);
+	tree(-3,0,-2);
+    road(10,0,10);
+    ground(10,-0.01,10);
+	tree(20,0,15);
+	tree(19,0,10);
+	tree(17,0,-10);
+    tree(20,0,-25);
+    tree(20,0,-15);
 
     function animate() {//animated cube
         cubeMesh.rotation.x += 0.01;
