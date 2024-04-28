@@ -19,6 +19,8 @@ let g_animation = false;
 let currentAngle=[0.0,0.0];
 let legAngle = 0;
 let wingAngle = 35;
+let shift=true;
+
 
 let g_startTime = 0;
 let elapsedTime = 0;
@@ -125,9 +127,8 @@ function drawTriangle3D(vertices) {
     gl_ctx.drawArrays(gl_ctx.TRIANGLES, 0, 3);
 }
 
-function drawCube(rgba, matrix){
+function drawCube(matrix){
     gl_ctx.uniformMatrix4fv(unif_ModelMatrix, false, matrix.elements);
-    gl_ctx.uniform4f(unif_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
     drawTriangle3D([0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0]);
     drawTriangle3D([0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0]);
     drawTriangle3D([0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0]);
@@ -142,16 +143,23 @@ function drawCube(rgba, matrix){
     drawTriangle3D([1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0]);
 }
 
+function colorCube(rgba){
+    gl_ctx.uniform4f(unif_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
+}
+
 
 function renderScene(timestamp_milis) {
     gl_ctx.clear(gl_ctx.COLOR_BUFFER_BIT | gl_ctx.DEPTH_BUFFER_BIT);
     if (g_animation) {
         g_startTime = performance.now() / 1000.0;
         elapsedTime = (timestamp_milis - g_startTime) / 1000.0;
-
         legAngle = Math.sin(elapsedTime * 2) * 20;
         wingAngle = Math.sin(elapsedTime * 5) * 90;
+        
+        
+        
     }
+
 
     let head_color = [0.8, 0.6, 0.4, 1.0];
     let beak_color = [1.0, 0.6, 0.2, 1.0];
@@ -161,27 +169,65 @@ function renderScene(timestamp_milis) {
     let eye_color = [0.0, 0.0, 0.0, 1.0]; 
 
     // Head
-    let head_matrix = new Matrix4()
+    if (shift){
+        headAngle = Math.sin(elapsedTime * 3) * 100;
+        let head_matrix = new Matrix4()
+        .rotate(headAngle, 0, 0, 1)
         .translate(-0.3, -0.3, 0.05)
         .scale(0.4, 0.8, 0.4);
-    drawCube(head_color, head_matrix);
+        drawCube(head_color, head_matrix);
 
-    // Beak
-    let beak_matrix = new Matrix4()
+    beakAngle = Math.sin(elapsedTime * 3) * 100;
+        let beak_matrix = new Matrix4()
+        .rotate(beakAngle, 0, 0, 1)
         .translate(-0.6, 0.2, 0.15) 
         .scale(0.3, 0.1, 0.2);
     drawCube(beak_color, beak_matrix);
 
-    // Eyes
+    eyeAngle = Math.sin(elapsedTime * 3) * 100;
     let L_eye_matrix = new Matrix4()
+        .rotate(eyeAngle, 0, 0, 1)
         .translate(-0.35, 0.3, 0.1)
         .scale(0.1, 0.15, 0.1);
     drawCube(eye_color, L_eye_matrix);
 
     let R_eye_matrix = new Matrix4()
+    .rotate(eyeAngle, 0, 0, 1)
         .translate(-0.35, 0.3, 0.3)
         .scale(0.1, 0.15, 0.1);
     drawCube(eye_color, R_eye_matrix);
+
+    }
+
+    if (!shift){
+        headAngle = Math.sin(elapsedTime * 3) * 10;
+        let head_matrix = new Matrix4()
+            .rotate(headAngle, 0, 0, 1)
+            .translate(-0.3, -0.3, 0.05)
+            .scale(0.4, 0.8, 0.4);
+        drawCube(head_color, head_matrix);
+
+        beakAngle = Math.sin(elapsedTime * 3) * 10;
+        let beak_matrix = new Matrix4()
+            .rotate(beakAngle, 0, 0, 1)
+            .translate(-0.6, 0.2, 0.15) 
+            .scale(0.3, 0.1, 0.2);
+        drawCube(beak_color, beak_matrix);
+
+        eyeAngle = Math.sin(elapsedTime * 3) * 10;
+        let L_eye_matrix = new Matrix4()
+        .rotate(eyeAngle, 0, 0, 1)
+        .translate(-0.35, 0.3, 0.1)
+        .scale(0.1, 0.15, 0.1);
+    drawCube(eye_color, L_eye_matrix);
+
+    let R_eye_matrix = new Matrix4()
+    .rotate(eyeAngle, 0, 0, 1)
+        .translate(-0.35, 0.3, 0.3)
+        .scale(0.1, 0.15, 0.1);
+    drawCube(eye_color, R_eye_matrix);
+
+    }
 
     // Body
     let body_matrix = new Matrix4()
@@ -215,6 +261,14 @@ function renderScene(timestamp_milis) {
         .rotate(-wingAngle, 0, 1, 0)
         .scale(0.7, 0.3, 0.1);
     drawCube(wing_color, rightWingMatrix);
+}
+
+function shiftKey(event) {
+    if (event.shiftKey) {
+        shift = true;
+    } else {
+        shift = false;
+    }
 }
 
 window.onload = main;
