@@ -194,7 +194,6 @@ function renderScene(timestamp_milis) {
     let wing_color = [1.0, 0.8, 0.6, 1.0]; 
     let eye_color = [0.0, 0.0, 0.0, 1.0];
 
-
     if (shift){
         headAngle = Math.sin(elapsedTime * 3) * 100;
         beakAngle = Math.sin(elapsedTime * 3) * 100;
@@ -275,7 +274,7 @@ function renderScene(timestamp_milis) {
 
     let duration = performance.now() - startTime;
     let fps_info = document.getElementById("fps")
-    fps_info.innerHTML = " fps: " + Math.floor(10000 / duration) //is this correct?
+    fps_info.innerHTML = " fps: " + Math.floor(1000 / duration)
 }
 
 window.onload = main;
