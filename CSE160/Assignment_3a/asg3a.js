@@ -57,7 +57,7 @@ let elapsedTime = 0;
 let attr_Position;
 let unif_FragColor;
 let unif_ModelMatrix;
-let unif_AnimalGlobalRotation;
+let unif_GlobalRotation;
 let preserveDrawingBuffer;
 
 //new
@@ -76,7 +76,7 @@ function main() {
   connectVariablesToGLSL();
   setup_UI_elements();
   camera = new Camera();
-  // cameraMove(canvas, currentAngle);
+  cameraMove(canvas, currentAngle);
   document.onkeydown = keydown;
   loadTexture("./lib/dirt.jpg", gl_ctx.TEXTURE0);
   loadTexture("./lib/sky.jpg", gl_ctx.TEXTURE1);
@@ -116,8 +116,8 @@ function connectVariablesToGLSL() {
   attr_Position = gl_ctx.getAttribLocation(gl_ctx.program, "Position");
   unif_ModelMatrix = gl_ctx.getUniformLocation(gl_ctx.program, 'ModelMatrix');
   unif_FragColor = gl_ctx.getUniformLocation(gl_ctx.program, 'FragColor');
-  unif_AnimalGlobalRotation = gl_ctx.getUniformLocation(gl_ctx.program, 'GlobalRotation');
-  gl_ctx.uniformMatrix4fv(unif_AnimalGlobalRotation, false, new Matrix4().elements);
+  unif_GlobalRotation = gl_ctx.getUniformLocation(gl_ctx.program, 'GlobalRotation');
+  gl_ctx.uniformMatrix4fv(unif_GlobalRotation, false, new Matrix4().elements);
 }
 
 function setup_UI_elements() {
@@ -135,7 +135,7 @@ function setup_UI_elements() {
   };
   document.getElementById("rotation_angle").addEventListener("input", function () {
       let stuff = new Matrix4().rotate(parseFloat(this.value), 0, 1, 0).elements;
-      gl_ctx.uniformMatrix4fv(unif_AnimalGlobalRotation, false, stuff);
+      gl_ctx.uniformMatrix4fv(unif_GlobalRotation, false, stuff);
       renderScene();
   });
   document.getElementById("wing_slider").addEventListener("input", function () {
@@ -155,35 +155,35 @@ function setup_UI_elements() {
   });
 }
 
-// function cameraMove(canvas, currentAngle) {
-//   let dragging = false;
-//   let lastX = -1;
-//   let lastY = -1; 
-//   document.addEventListener('mousedown', function(ev) {
-//       if (ev.target === canvas) {
-//           dragging = true;
-//           lastX = ev.clientX;
-//           lastY = ev.clientY;
-//       }
-//   });
-//   document.addEventListener('mouseup', function(ev) {
-//       dragging = false;
-//   });
-//   document.addEventListener('mousemove', function(ev) {
-//       if (dragging) {
-//           let factor = 500 / canvas.height;
-//           currentAngle[0] = Math.max(Math.min(currentAngle[0] + (factor * (ev.clientY - lastY)), 90.0), -90.0);
-//           currentAngle[1] += factor * (ev.clientX - lastX);
-//           let rotationMatrix = new Matrix4()
-//               .rotate(currentAngle[0], 1, 0, 0)
-//               .rotate(currentAngle[1], 0, 1, 0);
-//           gl_ctx.uniformMatrix4fv(unif_AnimalGlobalRotation, false, rotationMatrix.elements);
-//           renderScene(); 
-//           lastX = ev.clientX;
-//           lastY = ev.clientY;
-//       }
-//   });
-// }
+function cameraMove(canvas, currentAngle) {
+  let dragging = false;
+  let lastX = -1;
+  let lastY = -1; 
+  document.addEventListener('mousedown', function(ev) {
+      if (ev.target === canvas) {
+          dragging = true;
+          lastX = ev.clientX;
+          lastY = ev.clientY;
+      }
+  });
+  document.addEventListener('mouseup', function(ev) {
+      dragging = false;
+  });
+  document.addEventListener('mousemove', function(ev) {
+      if (dragging) {
+          let factor = 500 / canvas.height;
+          currentAngle[0] = Math.max(Math.min(currentAngle[0] + (factor * (ev.clientY - lastY)), 90.0), -90.0);
+          currentAngle[1] += factor * (ev.clientX - lastX);
+          let rotationMatrix = new Matrix4()
+              .rotate(currentAngle[0], 1, 0, 0)
+              .rotate(currentAngle[1], 0, 1, 0);
+          gl_ctx.uniformMatrix4fv(unif_GlobalRotation, false, rotationMatrix.elements);
+          renderScene(); 
+          lastX = ev.clientX;
+          lastY = ev.clientY;
+      }
+  });
+}
 
 //texture
 function loadTexture(url, texNum) {
@@ -280,17 +280,17 @@ let beakAngle = Math.sin(elapsedTime * 3) * 10;
 let eyeAngle = Math.sin(elapsedTime * 3) * 10;
 
 function renderScene(timestamp_milis) {
-  var projMat = camera.projMat;
-  gl_ctx.uniformMatrix4fv(unif_ProjectionMatrix, false, projMat.elements);
+  var projectionMatrix = camera.projectionMatrix;
+  gl_ctx.uniformMatrix4fv(unif_ProjectionMatrix, false, projectionMatrix.elements);
 
-  var viewMat = camera.viewMat;
-  gl_ctx.uniformMatrix4fv(unif_ViewMatrix, false, viewMat.elements);
+  var viewMatrix = camera.viewMatrix;
+  gl_ctx.uniformMatrix4fv(unif_ViewMatrix, false, viewMatrix.elements);
 
   var globalRotateMatrix = new Matrix4().rotate(currentAngle[0], 1.0, 0.0, 0.0);
   globalRotateMatrix.rotate(currentAngle[1], 0.0, 1.0, 0.0);
 
   globalRotateMatrix.rotate(rotation_angle.value, 0.0, 1.0, 0.0);
-  gl_ctx.uniformMatrix4fv(unif_AnimalGlobalRotation, false, globalRotateMatrix.elements);
+  gl_ctx.uniformMatrix4fv(unif_GlobalRotation, false, globalRotateMatrix.elements);
 
   gl_ctx.clear(gl_ctx.COLOR_BUFFER_BIT | gl_ctx.DEPTH_BUFFER_BIT);
   //fps stuff
@@ -403,11 +403,28 @@ function renderScene(timestamp_milis) {
   renderDirtCubes();
 }
 
-function renderDirtCubes(){
-  dirtCube([-2,-0.8,-2]); 
-  dirtCube([-1,-0.8,-2]);
-  dirtCube([-2,0.2,-2]);
-  dirtCube([-2,-0.8,-1]);
+function renderDirtCubes() {
+  dirtCube([-4, -0.8, -2]); // Bottom layer
+  dirtCube([-3, -0.8, -2]); // Bottom layer
+  dirtCube([-4, -0.8, -1]); // Second layer
+  dirtCube([-4, 0.2, -2]);  // Second layer
+
+
+  for (let i = 0; i < 4; i++){
+    dirtCube([1, -0.8, -4-i]);
+    dirtCube([1, -0.8+1, -4-i]);
+    dirtCube([-2, -0.8, -4-i]);
+    dirtCube([-2, -0.8+1, -4-i]);
+    dirtCube([1-i, -0.8, -8]);
+    dirtCube([1-i, -0.8+1, -8]);
+  }
+
+  for(let i = 0; i<5; i++){
+    GrassCube([-2,1.2,-8+i]);
+    GrassCube([-1,1.2,-8+i]);
+    GrassCube([0,1.2,-8+i]);
+    GrassCube([1,1.2,-8+i]);
+  }
 }
 
 function renderGroundGrass(){
@@ -435,6 +452,14 @@ function dirtCube(coords){
   let dirtCube = new Matrix4()
     .translate(coords[0],coords[1],coords[2]);
   drawCube(color, dirtCube);
+}
+
+function GrassCube(coords){
+  gl_ctx.uniform1i(unif_samplerType, 2);
+  let color = [0,0,0,1];
+  let GrassCube = new Matrix4()
+    .translate(coords[0],coords[1],coords[2]);
+  drawCube(color, GrassCube);
 }
 
 
