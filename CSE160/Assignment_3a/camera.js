@@ -38,6 +38,7 @@ class Camera {
             this.at.elements[0], this.at.elements[1], this.at.elements[2],
             this.up.elements[0], this.up.elements[1], this.up.elements[2]);
     }
+    
     moveLeft() {
         var f = new Vector3();
         f.set(this.at);

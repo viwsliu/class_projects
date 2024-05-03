@@ -21,6 +21,7 @@ varying vec2 var_UV;
 uniform vec4 FragColor;
 uniform sampler2D Sampler0;
 uniform sampler2D Sampler1;
+uniform sampler2D Sampler2;
 uniform int samplerType;
 
 void main() {
@@ -31,6 +32,9 @@ void main() {
     gl_FragColor = texture2D(Sampler1, var_UV);
   }
   else if (samplerType==2){
+    gl_FragColor = texture2D(Sampler2, var_UV);
+  }
+  else if (samplerType==3){
     gl_FragColor = FragColor;
   }
   else {
@@ -63,6 +67,7 @@ let unif_ProjectionMatrix;
 let unif_ViewMatrix;
 let unif_Sampler0;
 let unif_Sampler1;
+let unif_Sampler2;
 let unif_samplerType;
 
 
@@ -74,8 +79,9 @@ function main() {
   document.onkeydown = keydown;
   loadTexture("./lib/dirt.jpg", gl_ctx.TEXTURE0);
   loadTexture("./lib/sky.jpg", gl_ctx.TEXTURE1);
+  loadTexture("./lib/grass.jpg", gl_ctx.TEXTURE2);
   renderScene();
-
+  
 }
 
 function setupWebGL() {
@@ -100,6 +106,8 @@ function connectVariablesToGLSL() {
   gl_ctx.uniform1i(unif_Sampler0, 0);
   unif_Sampler1 = gl_ctx.getUniformLocation(gl_ctx.program, 'Sampler1');
   gl_ctx.uniform1i(unif_Sampler1, 1);
+  unif_Sampler2 = gl_ctx.getUniformLocation(gl_ctx.program, 'Sampler2');
+  gl_ctx.uniform1i(unif_Sampler2, 2);
 
   unif_samplerType = gl_ctx.getUniformLocation(gl_ctx.program, 'samplerType');
   unif_ProjectionMatrix = gl_ctx.getUniformLocation(gl_ctx.program, 'ProjectionMatrix');
@@ -135,7 +143,7 @@ function setup_UI_elements() {
       renderScene();
   });
   document.getElementById("head_slider").addEventListener("input", function () {
-      g_animation = false; // Stop animation while manually adjusting
+      g_animation = false;
       headAngle = parseFloat(this.value);
       renderScene();
   });
@@ -192,6 +200,7 @@ function loadTexture(url, texNum) {
       gl_ctx.texParameteri(gl_ctx.TEXTURE_2D, gl_ctx.TEXTURE_WRAP_T, gl_ctx.CLAMP_TO_EDGE);
       gl_ctx.texParameteri(gl_ctx.TEXTURE_2D, gl_ctx.TEXTURE_MIN_FILTER, gl_ctx.LINEAR);
     }
+    renderScene();
   };
   image.src = url;
   
@@ -202,7 +211,7 @@ function isPowerOf2(value) {
   return (value & (value - 1)) === 0;
 }
 
-function drawTriangle3D(vertices) {
+function drawTriangle3DUV(vertices, uvCoords) {
   var vertexBuffer = gl_ctx.createBuffer();
   var UVBuffer = gl_ctx.createBuffer();
   if (!vertexBuffer) {
@@ -215,28 +224,27 @@ function drawTriangle3D(vertices) {
   gl_ctx.enableVertexAttribArray(attr_Position);
 
   gl_ctx.bindBuffer(gl_ctx.ARRAY_BUFFER, UVBuffer);
-  gl_ctx.bufferData(gl_ctx.ARRAY_BUFFER, new Float32Array([0.0, 0.0, 1.0, 1.0, 1.0, 0.0]), gl_ctx.DYNAMIC_DRAW);
+  gl_ctx.bufferData(gl_ctx.ARRAY_BUFFER, new Float32Array(uvCoords), gl_ctx.DYNAMIC_DRAW);
   gl_ctx.vertexAttribPointer(attr_UV, 2, gl_ctx.FLOAT, false, 0, 0);
   gl_ctx.enableVertexAttribArray(attr_UV);
-
   gl_ctx.drawArrays(gl_ctx.TRIANGLES, 0, 3);
 }
 
 function drawCube(rgba, matrix){
   gl_ctx.uniform4f(unif_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
   gl_ctx.uniformMatrix4fv(unif_ModelMatrix, false, matrix.elements);
-  drawTriangle3D([0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0]);
-  drawTriangle3D([0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0]);
-  drawTriangle3D([0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0]);
-  drawTriangle3D([0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0]);
-  drawTriangle3D([0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0]);
-  drawTriangle3D([0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0]);
-  drawTriangle3D([0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0]);
-  drawTriangle3D([1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0]);
-  drawTriangle3D([0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0]);
-  drawTriangle3D([0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
-  drawTriangle3D([1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0]);
-  drawTriangle3D([1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0]);
+  drawTriangle3DUV([0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0], [1, 0, 0, 1, 0, 0]);
+  drawTriangle3DUV([0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0], [1, 0, 1, 1, 0, 1]);
+  drawTriangle3DUV([0, 0, 1, 1, 1, 1, 1, 0, 1], [0, 0, 1, 1, 1, 0]);
+  drawTriangle3DUV([0, 0, 1, 0, 1, 1, 1, 1, 1], [0, 0, 0, 1, 1, 1]);
+  drawTriangle3DUV([0, 1, 0, 0, 1, 1, 1, 1, 1], [0, 0, 0, 1, 1, 1]);
+  drawTriangle3DUV([0, 1, 0, 1, 1, 1, 1, 1, 0], [0, 0, 1, 1, 1, 0]);
+  drawTriangle3DUV([0, 0, 0, 0, 0, 1, 1, 0, 1], [0, 0, 0, 1, 1, 1]);
+  drawTriangle3DUV([0, 0, 0, 1, 0, 1, 1, 0, 0], [0, 0, 1, 1, 1, 0]);
+  drawTriangle3DUV([0, 0, 0, 0, 1, 0, 0, 0, 1], [0, 0, 0, 1, 1, 0]);
+  drawTriangle3DUV([0, 1, 1, 0, 1, 0, 0, 0, 1], [1, 1, 0, 1, 1, 0]);
+  drawTriangle3DUV([1, 0, 0, 1, 1, 1, 1, 1, 0], [1, 0, 0, 1, 1, 1]);
+  drawTriangle3DUV([1, 0, 0, 1, 1, 1, 1, 0, 1], [1, 0, 0, 1, 0, 0]);
 }
 
 let headAngle = Math.sin(elapsedTime * 3) * 10;
@@ -261,14 +269,14 @@ function renderScene(timestamp_milis) {
   let startTime = performance.now();
 
   if (g_animation) {
-      g_startTime = performance.now() / 1000.0;
-      elapsedTime = (timestamp_milis - g_startTime) / 1000.0;
-      legAngle = Math.sin(elapsedTime * 2) * 20;
-      wingAngle = Math.sin(elapsedTime * 5) * 90;
-      headAngle = Math.sin(elapsedTime * 3) * 10;
-      beakAngle = Math.sin(elapsedTime * 3) * 10;
-      eyeAngle = Math.sin(elapsedTime * 3) * 10;
-      maneAngle = Math.sin(elapsedTime * 3) * 10;
+    g_startTime = performance.now() / 1000.0;
+    elapsedTime = (timestamp_milis - g_startTime) / 1000.0;
+    legAngle = Math.sin(elapsedTime * 2) * 20;
+    wingAngle = Math.sin(elapsedTime * 5) * 90;
+    headAngle = Math.sin(elapsedTime * 3) * 10;
+    beakAngle = Math.sin(elapsedTime * 3) * 10;
+    eyeAngle = Math.sin(elapsedTime * 3) * 10;
+    maneAngle = Math.sin(elapsedTime * 3) * 10;
   }
   let head_color = [0.8, 0.6, 0.4, 1.0];
   let beak_color = [1.0, 0.6, 0.2, 1.0];
@@ -285,7 +293,7 @@ function renderScene(timestamp_milis) {
       eyeAngle = Math.sin(elapsedTime * 3) * 100;
       maneAngle = Math.sin(elapsedTime * 3) * 100;
   }
-  gl_ctx.uniform1i(unif_samplerType, 2);
+  gl_ctx.uniform1i(unif_samplerType, 3);
   // head
   let head_matrix = new Matrix4()
       .rotate(headAngle, 0, 0, 1)
@@ -375,7 +383,7 @@ function renderDirtCubes(){
 }
 
 function renderGroundGrass(){
-  gl_ctx.uniform1i(unif_samplerType, 0);
+  gl_ctx.uniform1i(unif_samplerType, 2);
   let green = [0, 1, 0, 1.0];
   let groundMatrix = new Matrix4()
     .translate(-50, -0.9, -50)
@@ -388,11 +396,13 @@ function renderSkyCube(){
   let blue = [0, 0, 1, 1.0];
   let skyMatrix = new Matrix4()
     .translate(-50, -50, -50)
-    .scale(100, 100, 100);
+    .scale(100, 100, 100)
+
   drawCube(blue, skyMatrix);
 }
 
 function dirtCube(coords){
+  gl_ctx.uniform1i(unif_samplerType, 0);
   let color = [0,0,0,1];
   let dirtCube = new Matrix4()
     .translate(coords[0],coords[1],coords[2]);
@@ -402,22 +412,22 @@ function dirtCube(coords){
 
 function keydown(event) {
   switch (event.key) {
-    case 'w': // W
+    case 'w':
       camera.moveForward();
       break;
-    case 'a': // A
+    case 'a':
     camera.moveRight();
       break;
-    case 's': // S
+    case 's':
       camera.moveBackwards();
       break;
-    case 'd': // D
+    case 'd':
       camera.moveLeft();
       break;
-    case 'q': // Q
+    case 'q':
       camera.panLeft();
       break;
-    case 'e': // E
+    case 'e':
       camera.panRight();
       break;
     default:
