@@ -76,6 +76,7 @@ function main() {
   connectVariablesToGLSL();
   setup_UI_elements();
   camera = new Camera();
+  // cameraMove(canvas, currentAngle);
   document.onkeydown = keydown;
   loadTexture("./lib/dirt.jpg", gl_ctx.TEXTURE0);
   loadTexture("./lib/sky.jpg", gl_ctx.TEXTURE1);
@@ -154,11 +155,39 @@ function setup_UI_elements() {
   });
 }
 
+// function cameraMove(canvas, currentAngle) {
+//   let dragging = false;
+//   let lastX = -1;
+//   let lastY = -1; 
+//   document.addEventListener('mousedown', function(ev) {
+//       if (ev.target === canvas) {
+//           dragging = true;
+//           lastX = ev.clientX;
+//           lastY = ev.clientY;
+//       }
+//   });
+//   document.addEventListener('mouseup', function(ev) {
+//       dragging = false;
+//   });
+//   document.addEventListener('mousemove', function(ev) {
+//       if (dragging) {
+//           let factor = 500 / canvas.height;
+//           currentAngle[0] = Math.max(Math.min(currentAngle[0] + (factor * (ev.clientY - lastY)), 90.0), -90.0);
+//           currentAngle[1] += factor * (ev.clientX - lastX);
+//           let rotationMatrix = new Matrix4()
+//               .rotate(currentAngle[0], 1, 0, 0)
+//               .rotate(currentAngle[1], 0, 1, 0);
+//           gl_ctx.uniformMatrix4fv(unif_AnimalGlobalRotation, false, rotationMatrix.elements);
+//           renderScene(); 
+//           lastX = ev.clientX;
+//           lastY = ev.clientY;
+//       }
+//   });
+// }
+
 //texture
 function loadTexture(url, texNum) {
-
   gl_ctx.activeTexture(texNum);
-
   const texture = gl_ctx.createTexture();  
   gl_ctx.bindTexture(gl_ctx.TEXTURE_2D, texture);
   const level = 0;
@@ -203,7 +232,6 @@ function loadTexture(url, texNum) {
     renderScene();
   };
   image.src = url;
-  
   return texture;
 }
 
