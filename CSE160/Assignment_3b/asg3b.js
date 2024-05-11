@@ -399,7 +399,6 @@ function renderScene(timestamp_milis) {
   renderGreenTop(15,0);
   
   walls();
-  //create 
 }
 
 function walls(){
@@ -411,19 +410,18 @@ function walls(){
     GrassCube([7, -0.8+1, 7-i]);
     dirtCube([7, -0.8+2, 7-i]);
     GrassCube([7, -0.8+3, 7-i]);
-    dirtCube([7, -0.8+4, 7-i]);
+
     //z left
     dirtCube([-8, -0.8, 7-i]);
     GrassCube([-8, -0.8+1, 7-i]);
     dirtCube([-8, -0.8+2, 7-i]);
     GrassCube([-8, -0.8+3, 7-i]);
-    dirtCube([-8, -0.8+4, 7-i]);
+
     //x back
     dirtCube([7-i, -0.8, -7]);
     GrassCube([7-i, -0.8+1, -7]);
     dirtCube([7-i, -0.8+2, -7]);
     GrassCube([7-i, -0.8+3, -7]);
-    dirtCube([7-i, -0.8+4, -7]);
   }
 
   for(let i = 0; i < 12; i++){
@@ -432,7 +430,6 @@ function walls(){
     GrassCube([6-i-2, -0.8+1, 7]);
     dirtCube([6-i-2, -0.8+2, 7]);
     GrassCube([6-i-2, -0.8+3, 7]);
-    dirtCube([6-i-2, -0.8+4, 7]);
   }
   //wall 1
   for(let i = 0; i<9;i++){
@@ -440,7 +437,6 @@ function walls(){
     GrassCube([4, -0.8+1, 4-i]);
     dirtCube([4, -0.8+2, 4-i]);
     GrassCube([4, -0.8+3, 4-i]);
-    dirtCube([4, -0.8+4, 4-i]);
   }
   //wall 2
   for(let i = 0; i<5;i++){
@@ -448,7 +444,6 @@ function walls(){
     GrassCube([3-i, -0.8+1, -4]);
     dirtCube([3-i, -0.8+2, -4]);
     GrassCube([3-i, -0.8+3, -4]);
-    dirtCube([3-i, -0.8+4, -4]);
   }
 //wall 3
   for(let i = 0; i<5;i++){
@@ -456,7 +451,6 @@ function walls(){
     GrassCube([0-i, -0.8+1, -1]);
     dirtCube([0-i, -0.8+2, -1]);
     GrassCube([0-i, -0.8+3, -1]);
-    dirtCube([0-i, -0.8+4, -1]);
   }
 //wall 4
   for(let i = 0; i<8;i++){
@@ -464,7 +458,6 @@ function walls(){
     GrassCube([1, -0.8+1, 6-i]);
     dirtCube([1, -0.8+2, 6-i]);
     GrassCube([1, -0.8+3, 6-i]);
-    dirtCube([1, -0.8+4, 6-i]);
   }
 //wall 5
   for(let i = 0; i<4;i++){
@@ -472,7 +465,6 @@ function walls(){
     GrassCube([-5, -0.8+1, -1-i]);
     dirtCube([-5, -0.8+2, -1-i]);
     GrassCube([-5, -0.8+3, -1-i]);
-    dirtCube([-5, -0.8+4, -1-i]);
   }
 //wall 6
   for(let i = 0; i<6; i++){
@@ -480,7 +472,6 @@ function walls(){
     GrassCube([-2-i, -0.8+1, 2]);
     dirtCube([-2-i, -0.8+2, 2]);
     GrassCube([-2-i, -0.8+3, 2]);
-    dirtCube([-2-i, -0.8+4, 2]);
   }
   //wall 7
   for(let i = 0; i<2;i++){
@@ -488,7 +479,6 @@ function walls(){
     GrassCube([-2, -0.8+1, 3+i]);
     dirtCube([-2, -0.8+2, 3+i]);
     GrassCube([-2, -0.8+3, 3+i]);
-    dirtCube([-2, -0.8+4, 3+i]);
   }
 }
 
