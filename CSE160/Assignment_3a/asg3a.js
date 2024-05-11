@@ -404,11 +404,10 @@ function renderScene(timestamp_milis) {
 }
 
 function renderDirtCubes() {
-  dirtCube([-4, -0.8, -2]); // Bottom layer
-  dirtCube([-3, -0.8, -2]); // Bottom layer
-  dirtCube([-4, -0.8, -1]); // Second layer
-  dirtCube([-4, 0.2, -2]);  // Second layer
-
+  dirtCube([-4, -0.8, -2]);
+  dirtCube([-3, -0.8, -2]);
+  dirtCube([-4, -0.8, -1]);
+  dirtCube([-4, 0.2, -2]);
 
   for (let i = 0; i < 4; i++){
     dirtCube([1, -0.8, -4-i]);
@@ -461,7 +460,6 @@ function GrassCube(coords){
     .translate(coords[0],coords[1],coords[2]);
   drawCube(color, GrassCube);
 }
-
 
 function keydown(event) {
   switch (event.key) {
