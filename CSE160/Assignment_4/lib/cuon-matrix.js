@@ -24,18 +24,14 @@ class Vector3 {
    */
   set(src) {
     var i, s, d;
-
     s = src.elements;
     d = this.elements;
-
     if (s === d) {
       return;
     }
-
     for (i = 0; i < 3; ++i) {
       d[i] = s[i];
     }
-
     return this;
   }
 
