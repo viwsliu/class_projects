@@ -6,7 +6,6 @@ let VERT_SHADER_SOURCE = `
   uniform mat4 ModelMatrix;
   uniform mat4 ProjectionMatrix;
   uniform mat4 ViewMatrix;
-
   attribute vec3 attr_Normal;
   varying vec3 var_Normal;
   varying vec4 var_VertPos;
@@ -26,17 +25,14 @@ uniform sampler2D Sampler0;
 uniform sampler2D Sampler1;
 uniform sampler2D Sampler2;
 uniform int samplerType;
-
 uniform vec3 unif_cameraPos;
 varying vec3 var_Normal;
 varying vec4 var_VertPos;
 uniform bool unif_lightOn;
 uniform vec4 unif_lightColor;
 uniform vec3 unif_lightPos;
-
 uniform bool redSpecular;
 uniform bool normalize_bool;
-
 
 void main() {
   if (samplerType==0){
@@ -56,15 +52,11 @@ void main() {
   }
 
   vec3 lightVector = unif_lightPos - vec3(var_VertPos);
-  float r = length(lightVector);
-  vec3 L = normalize(lightVector);
-  vec3 N = normalize(var_Normal);
-  float nDotL = max(dot(N,L), 0.0);
- 
-  vec3 R = reflect(L,N);
-  vec3 E = normalize(unif_cameraPos - vec3(var_VertPos));
-  float specular = pow(max(-1.0*dot(E,R), 0.0), 3.0);
-  vec3 diffuse = 0.6 * vec3(gl_FragColor) * nDotL;
+  //float r = length(lightVector);
+  vec3 norm_light = normalize(lightVector);
+  vec3 norm = normalize(var_Normal);
+  float specular = pow(max(-1.0*dot(normalize(unif_cameraPos - vec3(var_VertPos)),reflect(norm_light,norm)), 0.0), 3.0);
+  vec3 diffuse = 0.6 * vec3(gl_FragColor) * max(dot(norm,norm_light), 0.0);
   vec3 ambient = 0.4 * vec3(gl_FragColor);
   if(unif_lightOn){
     gl_FragColor =vec4(specular+diffuse+ambient,1.0)*unif_lightColor;
@@ -89,12 +81,10 @@ let shift=true;
 let g_animation = false;
 let g_startTime = 0;
 let elapsedTime = 0;
-
 let attr_Position;
 let unif_FragColor;
 let unif_ModelMatrix;
 let preserveDrawingBuffer;
-
 let attr_UV;
 let var_UV;
 let unif_ProjectionMatrix;
@@ -105,17 +95,15 @@ let unif_Sampler2;
 let unif_samplerType;
 let camera;
 
-//new
+
 let attr_Normal;
 let var_Normal;
 let var_VertPos;
 let unif_cameraPos;
 let unif_lightOn;
 let lightOn = false;
-
 let unif_lightColor;
 let lightColor = [1.0,1.0,1.0,1.0];
-
 let unif_lightPos;
 let lightPos = [0, 5, 0];
 let normalize_bool = false;
@@ -171,10 +159,8 @@ function connectVariablesToGLSL() {
   unif_lightColor = gl_ctx.getUniformLocation(gl_ctx.program, 'unif_lightColor');
   gl_ctx.uniform4f(unif_lightColor, lightColor[0], lightColor[1], lightColor[2], lightColor[3]);
   unif_lightPos = gl_ctx.getUniformLocation(gl_ctx.program, 'unif_lightPos');
-
   normalize_bool = gl_ctx.getUniformLocation(gl_ctx.program, 'normalize_bool');
   redSpecular = gl_ctx.getUniformLocation(gl_ctx.program, 'redSpecular')
-
 }
 
 
@@ -373,7 +359,7 @@ function isPowerOf2(value) {
 function drawTriangle3D_UV_Norm(vertices, uv, normals) {
   var vertexBuffer = gl_ctx.createBuffer();
   if (!vertexBuffer) {
-      console.error('Failed to create the buffer object');
+      console.error('vertexBuffer error');
       return -1;
   }
   gl_ctx.bindBuffer(gl_ctx.ARRAY_BUFFER, vertexBuffer);
@@ -382,17 +368,16 @@ function drawTriangle3D_UV_Norm(vertices, uv, normals) {
   gl_ctx.enableVertexAttribArray(attr_Position);
   var uvBuffer = gl_ctx.createBuffer();
   if (!uvBuffer) {
-      console.error('Failed to create the buffer object');
+      console.error('uvBuffer error');
       return -1;
   }
   gl_ctx.bindBuffer(gl_ctx.ARRAY_BUFFER, uvBuffer);
   gl_ctx.bufferData(gl_ctx.ARRAY_BUFFER, new Float32Array(uv), gl_ctx.DYNAMIC_DRAW);
   gl_ctx.vertexAttribPointer(attr_UV, 2, gl_ctx.FLOAT, false, 0, 0);
   gl_ctx.enableVertexAttribArray(attr_UV);
-
   var normalBuffer = gl_ctx.createBuffer();
   if (!normalBuffer) {
-      console.error('Failed to create the buffer object');
+      console.error('normalBuffer error');
       return -1;
   }
   gl_ctx.bindBuffer(gl_ctx.ARRAY_BUFFER, normalBuffer);
