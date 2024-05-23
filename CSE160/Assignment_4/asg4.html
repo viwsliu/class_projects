@@ -25,21 +25,27 @@ Mane on head <input type="range" min="-20" max="20" value="0" class="slider" id=
 
 <p></p>
 Position of Light:
-X:<input type="range" min="-60" max="60" value="0" class="slider" id="lightPosX"> |
-Y:<input type="range" min="0" max="60" value="10" class="slider" id="lightPosY"> |
-Z:<input type="range" min="-60" max="60" value="0" class="slider" id="lightPosZ"> |
+    X:<input type="range" min="-60" max="60" value="0" class="slider" id="lightPosX"> |
+    Y:<input type="range" min="0" max="60" value="10" class="slider" id="lightPosY"> |
+    Z:<input type="range" min="-60" max="60" value="0" class="slider" id="lightPosZ"> |
 <p></p>
 Color of Light:
-    R:<input type="range" min="0" max="255" value="255" class="slider" id="lightR"> |
-    G:<input type="range" min="0" max="255" value="255" class="slider" id="lightG"> |
-    B:<input type="range" min="0" max="255" value="0" class="slider" id="lightB"> |
+    R:<input type="range" min="0" max="10" value="10" class="slider" id="lightR"> |
+    G:<input type="range" min="0" max="10" value="10" class="slider" id="lightG"> |
+    B:<input type="range" min="0" max="10" value="10" class="slider" id="lightB"> |
+    <!-- Brightness:<input type="range" min="1" max="10" value="10" class="slider" id="lightBrightness"> | -->
 <p></p>
 Animation:
     <button type="button" id="start">Start</button>
     <button type="button" id="stop">Stop</button>
 |
 Light:
-    <button type="button" id="lightToggle">On/Off</button>
+    <button type="button" id="lightToggleOn">On</button>
+    <button type="button" id="lightToggleOff">Off</button>
+|
+Specular Test:
+    <button type="button" id="specularToggleOn">On</button>
+    <button type="button" id="specularToggleOff">Off</button>
 |
 Normalized:
     <button type="button" id="Normalize_On">On</button>

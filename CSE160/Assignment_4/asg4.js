@@ -63,13 +63,13 @@ void main() {
  
   vec3 R = reflect(L,N);
   vec3 E = normalize(unif_cameraPos - vec3(var_VertPos));
-  float specular = pow(max(dot(E,R), 0.0), 3.0) * 0.8;
-  vec3 diffuse = vec3(1.0, 1.0, 0.9) * vec3(gl_FragColor) * nDotL *0.7;
-  vec3 ambient = vec3(gl_FragColor) * 0.2;
+  float specular = pow(max(-1.0*dot(E,R), 0.0), 3.0);
+  vec3 diffuse = 0.6 * vec3(gl_FragColor) * nDotL;
+  vec3 ambient = 0.4 * vec3(gl_FragColor);
   if(unif_lightOn){
     gl_FragColor =vec4(specular+diffuse+ambient,1.0)*unif_lightColor;
   }else{
-    gl_FragColor =vec4(diffuse+ambient,1.0);
+    //gl_FragColor =vec4(diffuse+ambient,1.0);
   }
   if (redSpecular == true){
     gl_FragColor = vec4(specular, 0.0, 0.0, 1.0);
@@ -113,10 +113,11 @@ let unif_cameraPos;
 let unif_lightOn;
 let lightOn = false;
 
-let unif_lightColor = [1,1,1,1];
+let unif_lightColor;
+let lightColor = [1.0,1.0,1.0,1.0];
 
 let unif_lightPos;
-let lightPos = [0, 10, 0];
+let lightPos = [0, 5, 0];
 let normalize_bool = false;
 let redSpecular = false;
 
@@ -168,6 +169,7 @@ function connectVariablesToGLSL() {
   unif_cameraPos = gl_ctx.getUniformLocation(gl_ctx.program, 'unif_cameraPos');
   unif_lightOn = gl_ctx.getUniformLocation(gl_ctx.program, 'unif_lightOn');
   unif_lightColor = gl_ctx.getUniformLocation(gl_ctx.program, 'unif_lightColor');
+  gl_ctx.uniform4f(unif_lightColor, lightColor[0], lightColor[1], lightColor[2], lightColor[3]);
   unif_lightPos = gl_ctx.getUniformLocation(gl_ctx.program, 'unif_lightPos');
 
   normalize_bool = gl_ctx.getUniformLocation(gl_ctx.program, 'normalize_bool');
@@ -219,26 +221,63 @@ function setup_UI_elements() {
     renderScene();
   };
   
-  document.getElementById('lightToggle').onclick = function() {
-    gl_ctx.uniform1i(unif_lightOn, !unif_lightOn);
+  document.getElementById('lightToggleOn').onclick = function() {
+    gl_ctx.uniform1i(unif_lightOn, true);
+    renderScene();
+  };
+  document.getElementById('lightToggleOff').onclick = function() {
+    gl_ctx.uniform1i(unif_lightOn, false);
+    renderScene();
+  };
+  document.getElementById('specularToggleOn').onclick = function() {
+    gl_ctx.uniform1i(redSpecular, true);
+    renderScene();
+  };
+  document.getElementById('specularToggleOff').onclick = function() {
+    gl_ctx.uniform1i(redSpecular, false);
     renderScene();
   };
   
   document.getElementById('lightPosX').addEventListener('mousemove', function (ev) {
     if (ev.buttons == 1) {
         lightPos[0] = (this.value);
+        gl_ctx.uniform3f(unif_lightPos, lightPos[0], lightPos[1], lightPos[2]);
         renderScene();
     }
   });
   document.getElementById('lightPosY').addEventListener('mousemove', function (ev) {
       if (ev.buttons == 1) {
         lightPos[1] = (this.value);
-          renderScene();
+        gl_ctx.uniform3f(unif_lightPos, lightPos[0], lightPos[1], lightPos[2]);
+        renderScene();
       }
   });
   document.getElementById('lightPosZ').addEventListener('mousemove', function (ev) {
       if (ev.buttons == 1) {
         lightPos[2] = (this.value);
+        gl_ctx.uniform3f(unif_lightPos, lightPos[0], lightPos[1], lightPos[2]);
+        renderScene();
+      }
+  });
+
+  document.getElementById('lightR').addEventListener('mousemove', function (ev) {
+    if (ev.buttons == 1) {
+      lightColor[0] = (this.value/10);
+      gl_ctx.uniform4f(unif_lightColor, lightColor[0], lightColor[1], lightColor[2], lightColor[3]);
+      renderScene();
+    }
+  });
+  document.getElementById('lightG').addEventListener('mousemove', function (ev) {
+      if (ev.buttons == 1) {
+        lightColor[1] = (this.value/10);
+        gl_ctx.uniform4f(unif_lightColor, lightColor[0], lightColor[1], lightColor[2], lightColor[3]);
+        renderScene();
+      }
+  });
+  document.getElementById('lightB').addEventListener('mousemove', function (ev) {
+      if (ev.buttons == 1) {
+        lightColor[2] = (this.value/10);
+        gl_ctx.uniform4f(unif_lightColor, lightColor[0], lightColor[1], lightColor[2], lightColor[3]);
         renderScene();
       }
   });
@@ -266,7 +305,7 @@ function cameraMove(canvas, currentAngle) {
           lastX = ev.clientX;
           lastY = ev.clientY;
           let length = (dx*dx) + (dy*dy);
-          console.log(dx, dy);
+          // console.log(dx, dy);
           if(length != 0){
             let rotationMatrix = new Matrix4()
               .rotate(length, -dy, dx, 0);
@@ -331,29 +370,10 @@ function isPowerOf2(value) {
   return (value & (value - 1)) === 0;
 }
 
-// function drawTriangle3DUV(vertices, uvCoords) {
-//   var vertexBuffer = gl_ctx.createBuffer();
-//   var UVBuffer = gl_ctx.createBuffer();
-//   if (!vertexBuffer) {
-//       console.log('Failed to create the buffer object');
-//       return -1;
-//   }
-//   gl_ctx.bindBuffer(gl_ctx.ARRAY_BUFFER, vertexBuffer);
-//   gl_ctx.bufferData(gl_ctx.ARRAY_BUFFER, new Float32Array(vertices), gl_ctx.DYNAMIC_DRAW);
-//   gl_ctx.vertexAttribPointer(attr_Position, 3, gl_ctx.FLOAT, false, 0, 0);
-//   gl_ctx.enableVertexAttribArray(attr_Position);
-
-//   gl_ctx.bindBuffer(gl_ctx.ARRAY_BUFFER, UVBuffer);
-//   gl_ctx.bufferData(gl_ctx.ARRAY_BUFFER, new Float32Array(uvCoords), gl_ctx.DYNAMIC_DRAW);
-//   gl_ctx.vertexAttribPointer(attr_UV, 2, gl_ctx.FLOAT, false, 0, 0);
-//   gl_ctx.enableVertexAttribArray(attr_UV);
-//   gl_ctx.drawArrays(gl_ctx.TRIANGLES, 0, 3);
-// }
-
-function drawTriangle3DUVNormal(vertices, uv, normals) {
+function drawTriangle3D_UV_Norm(vertices, uv, normals) {
   var vertexBuffer = gl_ctx.createBuffer();
   if (!vertexBuffer) {
-      console.log('Failed to create the buffer object');
+      console.error('Failed to create the buffer object');
       return -1;
   }
   gl_ctx.bindBuffer(gl_ctx.ARRAY_BUFFER, vertexBuffer);
@@ -362,7 +382,7 @@ function drawTriangle3DUVNormal(vertices, uv, normals) {
   gl_ctx.enableVertexAttribArray(attr_Position);
   var uvBuffer = gl_ctx.createBuffer();
   if (!uvBuffer) {
-      console.log('Failed to create the buffer object');
+      console.error('Failed to create the buffer object');
       return -1;
   }
   gl_ctx.bindBuffer(gl_ctx.ARRAY_BUFFER, uvBuffer);
@@ -372,7 +392,7 @@ function drawTriangle3DUVNormal(vertices, uv, normals) {
 
   var normalBuffer = gl_ctx.createBuffer();
   if (!normalBuffer) {
-      console.log('Failed to create the buffer object');
+      console.error('Failed to create the buffer object');
       return -1;
   }
   gl_ctx.bindBuffer(gl_ctx.ARRAY_BUFFER, normalBuffer);
@@ -386,18 +406,18 @@ function drawTriangle3DUVNormal(vertices, uv, normals) {
 function drawCube(rgba, matrix){
   gl_ctx.uniform4f(unif_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
   gl_ctx.uniformMatrix4fv(unif_ModelMatrix, false, matrix.elements);
-  drawTriangle3DUVNormal([0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0], [1, 0, 0, 1, 0, 0], [0, 0, -1, 0, 0, -1, 0, 0, -1]);
-  drawTriangle3DUVNormal([0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0], [1, 0, 1, 1, 0, 1], [0, 0, -1, 0, 0, -1, 0, 0, -1]);
-  drawTriangle3DUVNormal([0, 0, 1, 1, 1, 1, 1, 0, 1], [0, 0, 1, 1, 1, 0], [0, 0, 1, 0, 0, 1, 0, 0, 1]);
-  drawTriangle3DUVNormal([0, 0, 1, 0, 1, 1, 1, 1, 1], [0, 0, 0, 1, 1, 1], [0, 0, 1, 0, 0, 1, 0, 0, 1]);
-  drawTriangle3DUVNormal([0, 1, 0, 0, 1, 1, 1, 1, 1], [0, 0, 0, 1, 1, 1], [0, 1, 0, 0, 1, 0, 0, 1, 0]);
-  drawTriangle3DUVNormal([0, 1, 0, 1, 1, 1, 1, 1, 0], [0, 0, 1, 1, 1, 0], [0, 1, 0, 0, 1, 0, 0, 1, 0]);
-  drawTriangle3DUVNormal([0, 0, 0, 0, 0, 1, 1, 0, 1], [0, 0, 0, 1, 1, 1], [0, -1, 0, 0, -1, 0, 0, -1, 0]);
-  drawTriangle3DUVNormal([0, 0, 0, 1, 0, 1, 1, 0, 0], [0, 0, 1, 1, 1, 0], [0, -1, 0, 0, -1, 0, 0, -1, 0]);
-  drawTriangle3DUVNormal([0, 0, 0, 0, 1, 0, 0, 0, 1], [0, 0, 0, 1, 1, 0], [-1, 0, 0, -1, 0, 0, -1, 0, 0]);
-  drawTriangle3DUVNormal([0, 1, 1, 0, 1, 0, 0, 0, 1], [1, 1, 0, 1, 1, 0], [-1, 0, 0, -1, 0, 0, -1, 0, 0]);
-  drawTriangle3DUVNormal([1, 0, 0, 1, 1, 1, 1, 1, 0], [1, 0, 0, 1, 1, 1], [1, 0, 0, 1, 0, 0, 1, 0, 0]);
-  drawTriangle3DUVNormal([1, 0, 0, 1, 1, 1, 1, 0, 1], [1, 0, 0, 1, 0, 0], [1, 0, 0, 1, 0, 0, 1, 0, 0]);
+  drawTriangle3D_UV_Norm([0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0], [1, 0, 0, 1, 0, 0], [0, 0, -1, 0, 0, -1, 0, 0, -1]);
+  drawTriangle3D_UV_Norm([0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0], [1, 0, 1, 1, 0, 1], [0, 0, -1, 0, 0, -1, 0, 0, -1]);
+  drawTriangle3D_UV_Norm([0, 0, 1, 1, 1, 1, 1, 0, 1], [0, 0, 1, 1, 1, 0], [0, 0, 1, 0, 0, 1, 0, 0, 1]);
+  drawTriangle3D_UV_Norm([0, 0, 1, 0, 1, 1, 1, 1, 1], [0, 0, 0, 1, 1, 1], [0, 0, 1, 0, 0, 1, 0, 0, 1]);
+  drawTriangle3D_UV_Norm([0, 1, 0, 0, 1, 1, 1, 1, 1], [0, 0, 0, 1, 1, 1], [0, 1, 0, 0, 1, 0, 0, 1, 0]);
+  drawTriangle3D_UV_Norm([0, 1, 0, 1, 1, 1, 1, 1, 0], [0, 0, 1, 1, 1, 0], [0, 1, 0, 0, 1, 0, 0, 1, 0]);
+  drawTriangle3D_UV_Norm([0, 0, 0, 0, 0, 1, 1, 0, 1], [0, 0, 0, 1, 1, 1], [0, -1, 0, 0, -1, 0, 0, -1, 0]);
+  drawTriangle3D_UV_Norm([0, 0, 0, 1, 0, 1, 1, 0, 0], [0, 0, 1, 1, 1, 0], [0, -1, 0, 0, -1, 0, 0, -1, 0]);
+  drawTriangle3D_UV_Norm([0, 0, 0, 0, 1, 0, 0, 0, 1], [0, 0, 0, 1, 1, 0], [-1, 0, 0, -1, 0, 0, -1, 0, 0]);
+  drawTriangle3D_UV_Norm([0, 1, 1, 0, 1, 0, 0, 0, 1], [1, 1, 0, 1, 1, 0], [-1, 0, 0, -1, 0, 0, -1, 0, 0]);
+  drawTriangle3D_UV_Norm([1, 0, 0, 1, 1, 1, 1, 1, 0], [1, 0, 0, 1, 1, 1], [1, 0, 0, 1, 0, 0, 1, 0, 0]);
+  drawTriangle3D_UV_Norm([1, 0, 0, 1, 1, 1, 1, 0, 1], [1, 0, 0, 1, 0, 0], [1, 0, 0, 1, 0, 0, 1, 0, 0]);
 }
 
 function drawSphere(rgba, matrix){
@@ -426,7 +446,7 @@ function drawSphere(rgba, matrix){
       v = v.concat(p4);
       uv = uv.concat(uv4);
       gl_ctx.uniform4f(unif_FragColor, 1, 1, 1, 1);
-      drawTriangle3DUVNormal(v, uv, v);
+      drawTriangle3D_UV_Norm(v, uv, v);
       v = [];
       uv = [];
       v = v.concat(p1);
@@ -436,7 +456,7 @@ function drawSphere(rgba, matrix){
       v = v.concat(p3);
       uv = uv.concat(uv3);
       gl_ctx.uniform4f(unif_FragColor, 1, 0, 0, 1);
-      drawTriangle3DUVNormal(v, uv, v);
+      drawTriangle3D_UV_Norm(v, uv, v);
     }
   }
 }
@@ -445,6 +465,7 @@ function drawSphere(rgba, matrix){
 let headAngle = Math.sin(elapsedTime * 3) * 10;
 let beakAngle = Math.sin(elapsedTime * 3) * 10;
 let eyeAngle = Math.sin(elapsedTime * 3) * 10;
+let new_pos = Math.cos(elapsedTime * 3) *10;
 
 function renderScene(timestamp_milis) {
   var projectionMatrix = camera.projectionMatrix;
@@ -452,7 +473,8 @@ function renderScene(timestamp_milis) {
 
   var viewMatrix = camera.viewMatrix;
   gl_ctx.uniformMatrix4fv(unif_ViewMatrix, false, viewMatrix.elements);
-
+  gl_ctx.uniform3f(unif_lightPos, lightPos[0], lightPos[1], lightPos[2]);
+  gl_ctx.uniform3f(unif_cameraPos, camera.eye.elements[0], camera.eye.elements[1], camera.eye.elements[2]);
   gl_ctx.clear(gl_ctx.COLOR_BUFFER_BIT | gl_ctx.DEPTH_BUFFER_BIT);
   //fps stuff
   let startTime = performance.now();
@@ -466,7 +488,7 @@ function renderScene(timestamp_milis) {
     beakAngle = Math.sin(elapsedTime * 3) * 10;
     eyeAngle = Math.sin(elapsedTime * 3) * 10;
     maneAngle = Math.sin(elapsedTime * 3) * 10;
-    unif_lightPos[0] = Math.cos(elapsedTime * 3) *10;
+    new_pos = Math.sin(elapsedTime * 3) *10;
   }
   let head_color = [0.8, 0.6, 0.4, 1.0];
   let beak_color = [1.0, 0.6, 0.2, 1.0];
@@ -484,18 +506,22 @@ function renderScene(timestamp_milis) {
       maneAngle = Math.sin(elapsedTime * 3) * 100;
   }
 
-  gl_ctx.uniform3f(unif_lightPos, lightPos[0], lightPos[1], lightPos[2]);
-  gl_ctx.uniform3f(unif_cameraPos, camera.eye.elements[0], camera.eye.elements[1], camera.eye.elements[2]);
-
   //light1
   gl_ctx.uniform1i(unif_samplerType, 3);
   let color = [1,1,0,1];
+  if (g_animation){
+    let sunCube = new Matrix4()
+    .translate(new_pos, 5, new_pos)
+    
+    .scale(-1, -1, -1)
+  gl_ctx.uniform3f(unif_lightPos, new_pos, 5, new_pos);
+  drawCube(color, sunCube);
+  } else {
   let sunCube = new Matrix4()
     .translate(lightPos[0], lightPos[1], lightPos[2])
-    .scale(-1, -1, -1)
-    // .rotate(headAngle,1,1,1);
+    .scale(-1, -1, -1);
   drawCube(color, sunCube);
-  console.log(lightPos[0], lightPos[1], lightPos[2])
+  }
   
   gl_ctx.uniform1i(unif_samplerType, 3);
   // head
@@ -579,7 +605,7 @@ function renderScene(timestamp_milis) {
   renderDirtCubes();
 
 
-  sphere([0,5,0]);
+  sphere([5,3,0]);
 }
 
 function sphere(coords) {
