@@ -34,6 +34,10 @@ uniform bool unif_lightOn;
 uniform vec4 unif_lightColor;
 uniform vec3 unif_lightPos;
 
+uniform bool redSpecular;
+uniform bool normalize_bool;
+
+
 void main() {
   if (samplerType==0){
     gl_FragColor = texture2D(Sampler0, var_UV);
@@ -51,21 +55,27 @@ void main() {
     gl_FragColor = vec4(1,0,0,1);
   }
 
-  vec3 lightVector = vec3(var_VertPos) - unif_lightPos;
+  vec3 lightVector = unif_lightPos - vec3(var_VertPos);
   float r = length(lightVector);
   vec3 L = normalize(lightVector);
   vec3 N = normalize(var_Normal);
   float nDotL = max(dot(N,L), 0.0);
  
-  vec3 R = reflect(-L,N);
+  vec3 R = reflect(L,N);
   vec3 E = normalize(unif_cameraPos - vec3(var_VertPos));
-  float specular = pow(max(dot(E,R), 0.0), 64.0) * 0.8;
+  float specular = pow(max(dot(E,R), 0.0), 3.0) * 0.8;
   vec3 diffuse = vec3(1.0, 1.0, 0.9) * vec3(gl_FragColor) * nDotL *0.7;
   vec3 ambient = vec3(gl_FragColor) * 0.2;
   if(unif_lightOn){
     gl_FragColor =vec4(specular+diffuse+ambient,1.0)*unif_lightColor;
   }else{
     gl_FragColor =vec4(diffuse+ambient,1.0);
+  }
+  if (redSpecular == true){
+    gl_FragColor = vec4(specular, 0.0, 0.0, 1.0);
+  }
+  else if (normalize_bool == true){
+    gl_FragColor = vec4(var_Normal, 1.0);
   }
 }`;
 
@@ -101,12 +111,14 @@ let var_Normal;
 let var_VertPos;
 let unif_cameraPos;
 let unif_lightOn;
-let lightOn = true;
-let normalOn = false;
+let lightOn = false;
+
 let unif_lightColor = [1,1,1,1];
 
-let unif_lightPos = [0, 1, -2]
-
+let unif_lightPos;
+let lightPos = [0, 10, 0];
+let normalize_bool = false;
+let redSpecular = false;
 
 function main() {
   setupWebGL();
@@ -157,6 +169,10 @@ function connectVariablesToGLSL() {
   unif_lightOn = gl_ctx.getUniformLocation(gl_ctx.program, 'unif_lightOn');
   unif_lightColor = gl_ctx.getUniformLocation(gl_ctx.program, 'unif_lightColor');
   unif_lightPos = gl_ctx.getUniformLocation(gl_ctx.program, 'unif_lightPos');
+
+  normalize_bool = gl_ctx.getUniformLocation(gl_ctx.program, 'normalize_bool');
+  redSpecular = gl_ctx.getUniformLocation(gl_ctx.program, 'redSpecular')
+
 }
 
 
@@ -193,26 +209,37 @@ function setup_UI_elements() {
       renderScene();
   });
 
-  document.getElementById('Normalize_On').onclick = function() {attr_Normal = true;};
-  document.getElementById('Normalize_Off').onclick = function() {attr_Normal = false;};
+  document.getElementById('Normalize_On').onclick = function() {
+    gl_ctx.uniform1i(normalize_bool, true);
+    renderScene();
+  };
   
-  document.getElementById('lightToggle').onclick = function() {lightOn = !lightOn;};
+  document.getElementById('Normalize_Off').onclick = function() {
+    gl_ctx.uniform1i(normalize_bool, false);
+    renderScene();
+  };
+  
+  document.getElementById('lightToggle').onclick = function() {
+    gl_ctx.uniform1i(unif_lightOn, !unif_lightOn);
+    renderScene();
+  };
+  
   document.getElementById('lightPosX').addEventListener('mousemove', function (ev) {
     if (ev.buttons == 1) {
-        // unif_lightPos[0] = this.value / 100;
+        lightPos[0] = (this.value);
         renderScene();
     }
   });
   document.getElementById('lightPosY').addEventListener('mousemove', function (ev) {
       if (ev.buttons == 1) {
-          // unif_lightPos[1] = this.value / 100;
+        lightPos[1] = (this.value);
           renderScene();
       }
   });
   document.getElementById('lightPosZ').addEventListener('mousemove', function (ev) {
       if (ev.buttons == 1) {
-          // unif_lightPos[2] = this.value / 100;
-          renderScene();
+        lightPos[2] = (this.value);
+        renderScene();
       }
   });
 }
@@ -359,18 +386,18 @@ function drawTriangle3DUVNormal(vertices, uv, normals) {
 function drawCube(rgba, matrix){
   gl_ctx.uniform4f(unif_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
   gl_ctx.uniformMatrix4fv(unif_ModelMatrix, false, matrix.elements);
-  drawTriangle3DUVNormal([0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0], [1, 0, 0, 1, 0, 0], [0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0]);
-  drawTriangle3DUVNormal([0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0], [1, 0, 1, 1, 0, 1], [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0]);
-  drawTriangle3DUVNormal([0, 0, 1, 1, 1, 1, 1, 0, 1], [0, 0, 1, 1, 1, 0], [0, 0, 1, 1, 1, 1, 1, 0, 1]);
-  drawTriangle3DUVNormal([0, 0, 1, 0, 1, 1, 1, 1, 1], [0, 0, 0, 1, 1, 1], [0, 0, 1, 0, 1, 1, 1, 1, 1]);
-  drawTriangle3DUVNormal([0, 1, 0, 0, 1, 1, 1, 1, 1], [0, 0, 0, 1, 1, 1], [0, 1, 0, 0, 1, 1, 1, 1, 1]);
-  drawTriangle3DUVNormal([0, 1, 0, 1, 1, 1, 1, 1, 0], [0, 0, 1, 1, 1, 0], [0, 1, 0, 1, 1, 1, 1, 1, 0]);
-  drawTriangle3DUVNormal([0, 0, 0, 0, 0, 1, 1, 0, 1], [0, 0, 0, 1, 1, 1], [0, 0, 0, 0, 0, 1, 1, 0, 1]);
-  drawTriangle3DUVNormal([0, 0, 0, 1, 0, 1, 1, 0, 0], [0, 0, 1, 1, 1, 0], [0, 0, 0, 1, 0, 1, 1, 0, 0]);
-  drawTriangle3DUVNormal([0, 0, 0, 0, 1, 0, 0, 0, 1], [0, 0, 0, 1, 1, 0], [0, 0, 0, 0, 1, 0, 0, 0, 1]);
-  drawTriangle3DUVNormal([0, 1, 1, 0, 1, 0, 0, 0, 1], [1, 1, 0, 1, 1, 0], [0, 1, 1, 0, 1, 0, 0, 0, 1]);
-  drawTriangle3DUVNormal([1, 0, 0, 1, 1, 1, 1, 1, 0], [1, 0, 0, 1, 1, 1], [1, 0, 0, 1, 1, 1, 1, 1, 0]);
-  drawTriangle3DUVNormal([1, 0, 0, 1, 1, 1, 1, 0, 1], [1, 0, 0, 1, 0, 0], [1, 0, 0, 1, 1, 1, 1, 0, 1]);
+  drawTriangle3DUVNormal([0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0], [1, 0, 0, 1, 0, 0], [0, 0, -1, 0, 0, -1, 0, 0, -1]);
+  drawTriangle3DUVNormal([0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0], [1, 0, 1, 1, 0, 1], [0, 0, -1, 0, 0, -1, 0, 0, -1]);
+  drawTriangle3DUVNormal([0, 0, 1, 1, 1, 1, 1, 0, 1], [0, 0, 1, 1, 1, 0], [0, 0, 1, 0, 0, 1, 0, 0, 1]);
+  drawTriangle3DUVNormal([0, 0, 1, 0, 1, 1, 1, 1, 1], [0, 0, 0, 1, 1, 1], [0, 0, 1, 0, 0, 1, 0, 0, 1]);
+  drawTriangle3DUVNormal([0, 1, 0, 0, 1, 1, 1, 1, 1], [0, 0, 0, 1, 1, 1], [0, 1, 0, 0, 1, 0, 0, 1, 0]);
+  drawTriangle3DUVNormal([0, 1, 0, 1, 1, 1, 1, 1, 0], [0, 0, 1, 1, 1, 0], [0, 1, 0, 0, 1, 0, 0, 1, 0]);
+  drawTriangle3DUVNormal([0, 0, 0, 0, 0, 1, 1, 0, 1], [0, 0, 0, 1, 1, 1], [0, -1, 0, 0, -1, 0, 0, -1, 0]);
+  drawTriangle3DUVNormal([0, 0, 0, 1, 0, 1, 1, 0, 0], [0, 0, 1, 1, 1, 0], [0, -1, 0, 0, -1, 0, 0, -1, 0]);
+  drawTriangle3DUVNormal([0, 0, 0, 0, 1, 0, 0, 0, 1], [0, 0, 0, 1, 1, 0], [-1, 0, 0, -1, 0, 0, -1, 0, 0]);
+  drawTriangle3DUVNormal([0, 1, 1, 0, 1, 0, 0, 0, 1], [1, 1, 0, 1, 1, 0], [-1, 0, 0, -1, 0, 0, -1, 0, 0]);
+  drawTriangle3DUVNormal([1, 0, 0, 1, 1, 1, 1, 1, 0], [1, 0, 0, 1, 1, 1], [1, 0, 0, 1, 0, 0, 1, 0, 0]);
+  drawTriangle3DUVNormal([1, 0, 0, 1, 1, 1, 1, 0, 1], [1, 0, 0, 1, 0, 0], [1, 0, 0, 1, 0, 0, 1, 0, 0]);
 }
 
 function drawSphere(rgba, matrix){
@@ -456,6 +483,20 @@ function renderScene(timestamp_milis) {
       eyeAngle = Math.sin(elapsedTime * 3) * 100;
       maneAngle = Math.sin(elapsedTime * 3) * 100;
   }
+
+  gl_ctx.uniform3f(unif_lightPos, lightPos[0], lightPos[1], lightPos[2]);
+  gl_ctx.uniform3f(unif_cameraPos, camera.eye.elements[0], camera.eye.elements[1], camera.eye.elements[2]);
+
+  //light1
+  gl_ctx.uniform1i(unif_samplerType, 3);
+  let color = [1,1,0,1];
+  let sunCube = new Matrix4()
+    .translate(lightPos[0], lightPos[1], lightPos[2])
+    .scale(-1, -1, -1)
+    // .rotate(headAngle,1,1,1);
+  drawCube(color, sunCube);
+  console.log(lightPos[0], lightPos[1], lightPos[2])
+  
   gl_ctx.uniform1i(unif_samplerType, 3);
   // head
   let head_matrix = new Matrix4()
@@ -537,24 +578,16 @@ function renderScene(timestamp_milis) {
   renderGroundGrass();
   renderDirtCubes();
 
-  renderSun();
-  sphere([0,0,0]);
-}
 
-function renderSun() {
-  gl_ctx.uniform1i(unif_samplerType, 3);
-  let sunCube = new Matrix4()
-    .translate(0,10,0);
-  drawCube([1, 1, 0, 1.0], sunCube);
+  sphere([0,5,0]);
 }
 
 function sphere(coords) {
-  gl_ctx.uniform1i(unif_samplerType, 0);
+  gl_ctx.uniform1i(unif_samplerType, 3);
   
   let color = [1,1,1,1];
   let sphere = new Matrix4()
     .translate(coords[0], coords[1],coords[2]);
-  // if (normalOn) sphere.textureNum = -4;
   drawSphere(color, sphere);
 }
 
