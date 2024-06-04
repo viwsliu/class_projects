@@ -11,7 +11,7 @@ let lightPos = [10,10,10];
 let sphereMesh, light_source;
 const scene = new THREE.Scene();
 let isAnimating = false;
-let starting_animation = true;
+let isAnimatingMotorcycle = false;
 
 
 function main() {
@@ -27,7 +27,7 @@ function main() {
     camera.position.set(-10, 15, 20);
     controls.target.set(10, 10, 10);
     controls.update();
-    updater(posX, posY, posZ);
+    SphereUpdater(posX, posY, posZ);
     function render() {
         renderer.render(scene, camera);
         requestAnimationFrame(render);
@@ -49,7 +49,7 @@ function setup_UI_elements() {
         if (ev.buttons == 1) {
             lightPos[0] = (this.value);
             posX = lightPos[0]
-            updater(posX, posY, posZ);
+            SphereUpdater(posX, posY, posZ);
             console.log('test')
         }
         document.getElementById('lightPosX').value = this.value;
@@ -60,7 +60,7 @@ function setup_UI_elements() {
         if (ev.buttons == 1) {
             lightPos[1] = (this.value);
             posY = lightPos[1]
-            updater(posX, posY, posZ);
+            SphereUpdater(posX, posY, posZ);
         }
         document.getElementById('lightPosY').value = this.value;
         updateValues();
@@ -70,7 +70,7 @@ function setup_UI_elements() {
         if (ev.buttons == 1) {
             lightPos[2] = (this.value);
             posZ = lightPos[2]
-            updater(posX, posY, posZ);
+            SphereUpdater(posX, posY, posZ);
         }
         document.getElementById('lightPosZ').value = this.value;
         updateValues();
@@ -98,7 +98,7 @@ function setup_UI_elements() {
         updateValues();
     });
     document.getElementById("confirm").onclick = function () {
-        updater(posX, posY, posZ);
+        SphereUpdater(posX, posY, posZ);
     };
 
 
@@ -110,11 +110,21 @@ function setup_UI_elements() {
         isAnimating = false;
         animateOrbit();
     };
+    document.getElementById("start_motorcycle").onclick = function () {
+        isAnimatingMotorcycle = true;
+        animateDrive();
+    };
+    document.getElementById("stop_motorcycle").onclick = function () {
+        isAnimatingMotorcycle = false;
+        animateDrive();
+    };
     // Initial update
     updateValues();
 }
 
-
+function animateDrive(){
+    
+}
 
 function animateOrbit() {
     if (isAnimating == true) {
@@ -150,14 +160,16 @@ function animateSphere(startPosX, startPosY, startPosZ, targetPosX, targetPosY, 
             posX = startPosX + (targetPosX - startPosX) * progress;
             posY = startPosY + (targetPosY - startPosY) * progress;
             posZ = startPosZ + (targetPosZ - startPosZ) * progress;
-            updater(posX, posY, posZ);
+            SphereUpdater(posX, posY, posZ);
             requestAnimationFrame(updateSpherePosition);
+            console.log(time, duration)
         } else {
             posX = targetPosX;
             posY = targetPosY;
             posZ = targetPosZ;
-            updater(posX, posY, posZ);
+            SphereUpdater(posX, posY, posZ);
             animateOrbit();
+            
         }
         starting_animation = false;
         // console.log('run');
@@ -171,13 +183,12 @@ function animateSphere(startPosX, startPosY, startPosZ, targetPosX, targetPosY, 
     requestAnimationFrame(updateSpherePosition);
 }
 
-function updater(posX, posY, posZ) { //updates pos for 'sun'
+function SphereUpdater(posX, posY, posZ) { //updates pos for 'sun'
     if (sphereMesh) {
         scene.remove(sphereMesh);
         sphereMesh.geometry.dispose();
         sphereMesh.material.dispose();
     }
-
     if (light_source) {
         scene.remove(light_source);
         light_source.dispose();
