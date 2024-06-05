@@ -526,7 +526,7 @@ function basicShapes(){
     const cubeMesh = new THREE.Mesh(cube, cubeMaterial);
 
     const cylinder = new THREE.CylinderGeometry(1, 1, 2, 32);
-    const cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x0000FF });
+    const cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00FF00 });
     const cylinderMesh = new THREE.Mesh(cylinder, cylinderMaterial);
 
     const cylinder2 = new THREE.CylinderGeometry(1, 1, 30, 32);
@@ -534,7 +534,7 @@ function basicShapes(){
     const cylinderMesh2 = new THREE.Mesh(cylinder2, cylinderMaterial2);
 
     cubeMesh.position.set(-5, 5, 35);
-    cylinderMesh.position.set(-50, 0, 30);
+    cylinderMesh.position.set(-50, 0, 40);
     cylinderMesh2.position.set(-10, 10, -50);
 
     scene.add(cubeMesh, cylinderMesh, cylinderMesh2);
@@ -547,10 +547,13 @@ function basicShapes(){
     light_source2.intensity=5;
     scene.add(light_source2);
 
-    const light_source3 = new THREE.AmbientLight(0x0000FF, 1, 100);
-    light_source3.position.set(-50, 0, 30);
-    light_source3.intensity=1;
+    const light_source3 = new THREE.PointLight(0x00FF00, 1, 100);
+    light_source3.position.set(-50, 0, 40);
+    light_source3.intensity = 5;
     scene.add(light_source3);
+     
+
+
 
     const light_source4 = new THREE.AmbientLight(0x0000FF, 1, 100);
     light_source4.position.set(-10, 10, -50);
