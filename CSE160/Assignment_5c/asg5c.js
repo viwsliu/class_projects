@@ -14,6 +14,7 @@ let isAnimating = false;
 let isAnimatingMotorcycle = false;
 
 
+
 function main() {
     setup_UI_elements();
     const canvas = document.querySelector('#c');
@@ -25,7 +26,7 @@ function main() {
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     const controls = new OrbitControls(camera, renderer.domElement);
     camera.position.set(-10, 15, 20);
-    controls.target.set(10, 10, 10);
+    controls.target.set(10, 10, 10); //redo this to 10,10,10
     controls.update();
     SphereUpdater(posX, posY, posZ);
     function render() {
@@ -50,7 +51,6 @@ function setup_UI_elements() {
             lightPos[0] = (this.value);
             posX = lightPos[0]
             SphereUpdater(posX, posY, posZ);
-            console.log('test')
         }
         document.getElementById('lightPosX').value = this.value;
         updateValues();
@@ -76,7 +76,6 @@ function setup_UI_elements() {
         updateValues();
     });
 
-    // Input field input event listeners
     document.getElementById('lightPosX').addEventListener('input', function () {
         lightPos[0] = (this.value);
         posX = lightPos[0]
@@ -112,18 +111,13 @@ function setup_UI_elements() {
     };
     document.getElementById("start_motorcycle").onclick = function () {
         isAnimatingMotorcycle = true;
-        animateDrive();
+        animateMotorcycle();
     };
     document.getElementById("stop_motorcycle").onclick = function () {
         isAnimatingMotorcycle = false;
-        animateDrive();
+        animateMotorcycle();
     };
-    // Initial update
     updateValues();
-}
-
-function animateDrive(){
-    
 }
 
 function animateOrbit() {
@@ -144,14 +138,12 @@ function animateOrbit() {
         const targetPosX = centerX + orbitRadius * Math.cos(angle);
         const targetPosY = centerY;
         const targetPosZ = centerZ + orbitRadius * Math.sin(angle);
-        // console.log('run')
         animateSphere(startPosX, startPosY, startPosZ, targetPosX, targetPosY, targetPosZ);
     }
 }
 
 function animateSphere(startPosX, startPosY, startPosZ, targetPosX, targetPosY, targetPosZ) {
     const duration = 500; // Animation duration in milliseconds
-    
     const start = performance.now();
     function updateSpherePosition() {
         const time = performance.now() - start;
@@ -162,7 +154,7 @@ function animateSphere(startPosX, startPosY, startPosZ, targetPosX, targetPosY, 
             posZ = startPosZ + (targetPosZ - startPosZ) * progress;
             SphereUpdater(posX, posY, posZ);
             requestAnimationFrame(updateSpherePosition);
-            console.log(time, duration)
+            // console.log(time, duration)
         } else {
             posX = targetPosX;
             posY = targetPosY;
@@ -171,7 +163,6 @@ function animateSphere(startPosX, startPosY, startPosZ, targetPosX, targetPosY, 
             animateOrbit();
             
         }
-        starting_animation = false;
         // console.log('run');
         document.getElementById('lightPosX').value = posX;
         document.getElementById('lightPosY').value = posY;
@@ -206,9 +197,9 @@ function SphereUpdater(posX, posY, posZ) { //updates pos for 'sun'
 }
 
 
-function items(){
+function generate_world(){
     function ground(x, y, z) {
-        const ground = new THREE.BoxGeometry(100, 0.1, 100);
+        const ground = new THREE.BoxGeometry(300, 0.1, 300);
         const ground_color = new THREE.MeshBasicMaterial({ color: 0x734A12 });
         const groundMesh = new THREE.Mesh(ground, ground_color);
         groundMesh.position.set(x, y, z);
@@ -225,10 +216,10 @@ function items(){
             context.drawImage(texture.image, -canvas.height / 2, -canvas.width / 2);
             const texture2 = new THREE.CanvasTexture(canvas);
             const material = new THREE.MeshBasicMaterial({ map: texture2 });
-            const geometry = new THREE.SphereGeometry(100, 100, 100);
+            const geometry = new THREE.SphereGeometry(200, 200, 200);
             
             const skybox = new THREE.Mesh(geometry, material);
-            skybox.position.set(10, 40, 10);
+            skybox.position.set(10, 150, 10);
             skybox.material.side = THREE.BackSide;
             scene.add(skybox);
         });
@@ -238,12 +229,25 @@ function items(){
         scene.add(light_source4);
     }
     function road(x, y, z) {
-        const road = new THREE.BoxGeometry(10, 0.1, 95);
+        const road = new THREE.BoxGeometry(10, 0.1, 100);
         const road_color = new THREE.MeshBasicMaterial({ color: 0x000000 });
         const roadMesh = new THREE.Mesh(road, road_color);
         roadMesh.position.set(x, y, z);
         scene.add(roadMesh);
-        const divider = new THREE.BoxGeometry(0.2, 0.2, 95);
+
+        const sidewalk1 = new THREE.BoxGeometry(3, 0.2, 100);
+        const sidewalk1_color = new THREE.MeshBasicMaterial({ color: 0x808080 });
+        const sidewalk1Mesh = new THREE.Mesh(sidewalk1, sidewalk1_color);
+        sidewalk1Mesh.position.set(x+5, y, z);
+        scene.add(sidewalk1Mesh);
+
+        const sidewalk2 = new THREE.BoxGeometry(3, 0.2, 100);
+        const sidewalk2_color = new THREE.MeshBasicMaterial({ color: 0x808080 });
+        const sidewalk2Mesh = new THREE.Mesh(sidewalk2, sidewalk2_color);
+        sidewalk2Mesh.position.set(x-5, y, z);
+        scene.add(sidewalk2Mesh);
+
+        const divider = new THREE.BoxGeometry(0.2, 0.2, 100);
         const divider_color = new THREE.MeshPhongMaterial({ color: 0xFFFF00 }); // Yellow color
         const line1Mesh = new THREE.Mesh(divider, divider_color);
         const line2Mesh = new THREE.Mesh(divider, divider_color);
@@ -251,6 +255,104 @@ function items(){
         line2Mesh.position.set(x+0.2, y, z);
         scene.add(line1Mesh, line2Mesh);
     }
+
+    function rotated_road(x, y, z) {
+        const road = new THREE.BoxGeometry(100, 0.1, 10);
+        const road_color = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const roadMesh = new THREE.Mesh(road, road_color);
+        roadMesh.position.set(x, y, z);
+        scene.add(roadMesh);
+
+        const sidewalk1 = new THREE.BoxGeometry(100, 0.2, 3);
+        const sidewalk1_color = new THREE.MeshBasicMaterial({ color: 0x808080 });
+        const sidewalk1Mesh = new THREE.Mesh(sidewalk1, sidewalk1_color);
+        sidewalk1Mesh.position.set(x, y, z+5);
+        scene.add(sidewalk1Mesh);
+
+        const sidewalk2 = new THREE.BoxGeometry(100, 0.2, 3);
+        const sidewalk2_color = new THREE.MeshBasicMaterial({ color: 0x808080 });
+        const sidewalk2Mesh = new THREE.Mesh(sidewalk2, sidewalk2_color);
+        sidewalk2Mesh.position.set(x, y, z-5);
+        scene.add(sidewalk2Mesh);
+
+        const divider = new THREE.BoxGeometry(100, 0.2, 0.2);
+        const divider_color = new THREE.MeshPhongMaterial({ color: 0xFFFF00 }); // Yellow color
+        const line1Mesh = new THREE.Mesh(divider, divider_color);
+        const line2Mesh = new THREE.Mesh(divider, divider_color);
+        line1Mesh.position.set(x, y, z+0.2);
+        line2Mesh.position.set(x, y, z-0.2);
+        scene.add(line1Mesh, line2Mesh);
+    }
+
+    function createTrafficLight(x, y, z, group) {
+        const lightPole = new THREE.CylinderGeometry(0.5, 0.5, 5, 32);
+        const poleMaterial = new THREE.MeshBasicMaterial({ color: 0xC0C0C0 });
+        const poleMesh = new THREE.Mesh(lightPole, poleMaterial);
+        poleMesh.position.set(x, y+2, z);
+
+        const lightBox = new THREE.BoxGeometry(0.8, 3, 0.8);
+        const lightBoxMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const lightBoxMesh = new THREE.Mesh(lightBox, lightBoxMaterial);
+        lightBoxMesh.position.set(0, -4, -5);
+
+        const lightGeometry = new THREE.SphereGeometry(0.4, 32, 32);
+        const redLightMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const yellowLightMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        const greenLightMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+
+        const redLightMesh = new THREE.Mesh(lightGeometry, redLightMaterial);
+        const yellowLightMesh = new THREE.Mesh(lightGeometry, yellowLightMaterial);
+        const greenLightMesh = new THREE.Mesh(lightGeometry, greenLightMaterial);
+        switch(group) {
+            case 0:
+                redLightMesh.position.set(0, -3, -5.6);
+                yellowLightMesh.position.set(0, -4, -5.6);
+                greenLightMesh.position.set(0, -5, -5.6);
+                break;
+            case 1:
+                redLightMesh.position.set(10.5, -3, -15);
+                yellowLightMesh.position.set(10.5, -4, -15);
+                greenLightMesh.position.set(10.5, -5, -15);
+            break;
+            case 2:
+                redLightMesh.position.set(0, -3, 5.6);
+                yellowLightMesh.position.set(0, -4, 5.6);
+                greenLightMesh.position.set(0, -5, 5.6);
+            break;
+            case 3:
+                redLightMesh.position.set(-10.5, -3, -5);
+                yellowLightMesh.position.set(-10.5, -4, -5);
+                greenLightMesh.position.set(-10.5, -5, -5);
+            break;
+        }
+
+        const lightGroup = new THREE.Group();
+        lightGroup.add(lightBoxMesh);
+        lightGroup.add(redLightMesh);
+        lightGroup.add(yellowLightMesh);
+        lightGroup.add(greenLightMesh);
+        lightGroup.position.set(x, y + 9.5, z + 5);
+
+        const poleGroup = new THREE.Group();
+        poleGroup.add(poleMesh);
+        poleGroup.add(lightGroup);
+        scene.add(poleGroup);
+    }
+    
+    function intersection(x, y, z) {
+        const roadIntersect = new THREE.BoxGeometry(10, 0.1, 10);
+        const roadMaterial = new THREE.MeshBasicMaterial({ color: 0x404040 });
+        const roadMesh = new THREE.Mesh(roadIntersect, roadMaterial);
+        roadMesh.position.set(x, y, z);
+        scene.add(roadMesh);
+    
+        const poleDistance = 5;
+        createTrafficLight(x - poleDistance, y, z - poleDistance, 0);
+        createTrafficLight(x - poleDistance, y, z + poleDistance, 1);
+        createTrafficLight(x + poleDistance, y, z - poleDistance, 2);
+        createTrafficLight(x + poleDistance, y, z + poleDistance, 3);
+    }
+    
     function tree(x, y, z) {
         const trunk = new THREE.CylinderGeometry(0.5, 0.5, 3, 32);
         const trunk_color = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
@@ -269,39 +371,100 @@ function items(){
     tree(2,0,15);
     tree(-7,0,-4);
     tree(-3,0,-2);
-    road(10,0,10);
+
+    tree(-10,0,15);
+    tree(-11,0,10);
+    tree(-13,0,-10);
+    tree(-10,0,-25);
+    tree(-10,0,-15);
+
+    road(10,0,-100);
+    road(10,0,0);
+    road(10,0,110);
+    rotated_road(65,0,55);
+    rotated_road(-45,0,55);
+    intersection(10, 0, 55);
     ground(10,-0.01,10);
-    tree(20,0,15);
-    tree(19,0,10);
-    tree(17,0,-10);
-    tree(20,0,-25);
-    tree(20,0,-15);
-    // sky();
+    sky();
 }
 
-function objects(){
-    //scooter
-    const objLoader = new OBJLoader();
-    const mtlLoader = new MTLLoader();
-    mtlLoader.load('VR-Mobil/materials.mtl', (mtl) => {
+function objects(x,y,z){
+    const objLoader1 = new OBJLoader();
+    const mtlLoader1 = new MTLLoader();
+    mtlLoader1.load('large_building/large_buildingE.mtl', (mtl) => {
         mtl.preload();
-        objLoader.setMaterials(mtl);
-        objLoader.load('VR-Mobil/model.obj', (root) => {
-            root.position.set(8, 1.5, 5);
+        objLoader1.setMaterials(mtl);
+        objLoader1.load('large_building/large_buildingE.obj', (root) => {
+            root.position.set(x,y,z);
+            root.scale.set(10, 10, 10)
             root.rotation.y += Math.PI / 2;
             scene.add(root);
         });
     });
-    //large_building
+
     const objLoader2 = new OBJLoader();
     const mtlLoader2 = new MTLLoader();
     mtlLoader2.load('large_building/large_buildingE.mtl', (mtl) => {
         mtl.preload();
         objLoader2.setMaterials(mtl);
         objLoader2.load('large_building/large_buildingE.obj', (root) => {
-            root.position.set(30, 0, 30);
+            root.position.set(x,y,z-12);
             root.scale.set(10, 10, 10)
             root.rotation.y += Math.PI / 2;
+            scene.add(root);
+        });
+    });
+
+    const objLoader3 = new OBJLoader();
+    const mtlLoader3 = new MTLLoader();
+    mtlLoader3.load('large_building/large_buildingE.mtl', (mtl) => {
+        mtl.preload();
+        objLoader3.setMaterials(mtl);
+        objLoader3.load('large_building/large_buildingE.obj', (root) => {
+            root.position.set(x,y,z-24);
+            root.scale.set(10, 10, 10)
+            root.rotation.y += Math.PI / 2;
+            scene.add(root);
+        });
+    });
+}
+
+function objects2(x,y,z){
+    const objLoader1 = new OBJLoader();
+    const mtlLoader1 = new MTLLoader();
+    mtlLoader1.load('large_building/large_buildingE.mtl', (mtl) => {
+        mtl.preload();
+        objLoader1.setMaterials(mtl);
+        objLoader1.load('large_building/large_buildingE.obj', (root) => {
+            root.position.set(x,y,z);
+            root.scale.set(10, 10, 10)
+            // root.rotation.y += Math.PI / 2;
+            scene.add(root);
+        });
+    });
+
+    const objLoader2 = new OBJLoader();
+    const mtlLoader2 = new MTLLoader();
+    mtlLoader2.load('large_building/large_buildingE.mtl', (mtl) => {
+        mtl.preload();
+        objLoader2.setMaterials(mtl);
+        objLoader2.load('large_building/large_buildingE.obj', (root) => {
+            root.position.set(x-12,y,z);
+            root.scale.set(10, 10, 10)
+            // root.rotation.y += Math.PI / 2;
+            scene.add(root);
+        });
+    });
+
+    const objLoader3 = new OBJLoader();
+    const mtlLoader3 = new MTLLoader();
+    mtlLoader3.load('large_building/large_buildingE.mtl', (mtl) => {
+        mtl.preload();
+        objLoader3.setMaterials(mtl);
+        objLoader3.load('large_building/large_buildingE.obj', (root) => {
+            root.position.set(x-24,y,z);
+            root.scale.set(10, 10, 10)
+            // root.rotation.y += Math.PI / 2;
             scene.add(root);
         });
     });
@@ -320,8 +483,8 @@ function basicShapes(){
     const cylinderMaterial2 = new THREE.MeshPhongMaterial({ color: 0x00FFFF });
     const cylinderMesh2 = new THREE.Mesh(cylinder2, cylinderMaterial2);
 
-    cubeMesh.position.set(0, 5, -5);
-    cylinderMesh.position.set(0, 5, 30);
+    cubeMesh.position.set(-5, 5, 35);
+    cylinderMesh.position.set(-50, 0, 30);
     cylinderMesh2.position.set(0, 0, 0);
 
     scene.add(cubeMesh, cylinderMesh, cylinderMesh2);
@@ -329,13 +492,13 @@ function basicShapes(){
     const texture = textureLoader.load('./jpg/j.jpg');
     cubeMesh.material.map = texture;
     
-    const light_source2 = new THREE.PointLight(0xFF0000, 1, 100); // 0xFFFFFF is white
-    light_source2.position.set(0, 5, -5);
+    const light_source2 = new THREE.PointLight(0xFF0000, 1, 100);
+    light_source2.position.set(-5, 5, 35);
     light_source2.intensity=5;
     scene.add(light_source2);
 
-    const light_source3 = new THREE.PointLight(0x0000FF, 1, 100); // 0xFFFFFF is white
-    light_source3.position.set(0, 0, 30);
+    const light_source3 = new THREE.PointLight(0x0000FF, 1, 100);
+    light_source3.position.set(-50, 0, 30);
     light_source3.intensity=5;
     scene.add(light_source3);
 
@@ -347,11 +510,47 @@ function basicShapes(){
     animate();
 }
 
+let root;
+function createMotorcycle() {
+    const objLoader = new OBJLoader();
+    const mtlLoader = new MTLLoader();
+
+    mtlLoader.load('VR-Mobil/materials.mtl', (mtl) => {
+        mtl.preload();
+        objLoader.setMaterials(mtl);
+        objLoader.load('VR-Mobil/model.obj', (object) => {
+            root = object;
+            root.position.set(8, 1.5, 5);
+            root.rotation.y += Math.PI / 2;
+            scene.add(root);
+            if (isAnimatingMotorcycle==true) {
+                animateMotorcycle();
+                isAnimatingMotorcycle = false; // Ensure animation starts only once
+            }
+        });
+    });
+}
+
+
+function animateMotorcycle(bool) {
+    if(isAnimatingMotorcycle==true){
+    requestAnimationFrame(animateMotorcycle);
+    if (root) {
+        root.position.z += 0.5; // Move the motorcycle along the road
+        if (root.position.z > 100) root.position.z = -100; // Reset position
+    }
+}
+}
+
 main();
 basicShapes();
-objects();
-items();
-
+objects(22.5,0,92);
+objects(22.5,0,42);
+objects(22.5,0,0);
+objects2(-3,0,67);
+objects2(-50,0,67);
+generate_world();
+createMotorcycle();
 
 
 
