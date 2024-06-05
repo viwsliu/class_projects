@@ -126,13 +126,10 @@ function animateOrbit() {
         const startPosZ = posZ;
         const orbitRadius = 50;
         const orbitSpeed = 0.0005;
-        
-        //orbit origin
         const centerX = 10;
         const centerY = 10;
         const centerZ = 10; 
         
-
         const angle = orbitSpeed * Date.now();
         const targetPosX = centerX + orbitRadius * Math.cos(angle);
         const targetPosY = centerY;
@@ -143,7 +140,7 @@ function animateOrbit() {
 }
 
 function animateSphere(startPosX, startPosY, startPosZ, targetPosX, targetPosY, targetPosZ) {
-    const duration = 500; // Animation duration in milliseconds
+    const duration = 500;
     const start = performance.now();
     function updateSpherePosition() {
         const time = performance.now() - start;
@@ -176,7 +173,6 @@ function animateSphere(startPosX, startPosY, startPosZ, targetPosX, targetPosY, 
 }
 
 function SphereUpdater(posX, posY, posZ) { //updates pos for 'sun'
-    // console.log('SphereUpdater')
     if (sphereMesh) {
         scene.remove(sphereMesh);
         sphereMesh.geometry.dispose();
@@ -190,9 +186,13 @@ function SphereUpdater(posX, posY, posZ) { //updates pos for 'sun'
     const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
     sphereMesh = new THREE.Mesh(sphere, sphereMaterial);
     sphereMesh.position.set(posX, posY, posZ);
-    scene.add(sphereMesh)
-}
+    scene.add(sphereMesh);
 
+    light_source = new THREE.PointLight(0xFFFFFF, 1, 100); // 0xFFFFFF white
+    light_source.position.set(posX, posY, posZ);
+    light_source.intensity = 3;
+    scene.add(light_source);
+}
 
 function generate_world(){
     function ground(x, y, z) {
@@ -220,7 +220,7 @@ function generate_world(){
             skybox.material.side = THREE.BackSide;
             scene.add(skybox);
         });
-        const light_source4 = new THREE.PointLight(0x0000FF, 1, 100); // 0xFFFFFF is white
+        const light_source4 = new THREE.PointLight(0x0000FF, 1, 100);
         // light_source4.position.set(10, 40, 10);
         // light_source4.intensity=10;
         scene.add(light_source4);
@@ -354,12 +354,12 @@ function generate_world(){
         const trunk = new THREE.CylinderGeometry(0.5, 0.5, 3, 32);
         const trunk_color = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
         const trunkMesh = new THREE.Mesh(trunk, trunk_color);
-        trunkMesh.position.set(x, y + 1.5, z); // Adjust y position to center the trunk
+        trunkMesh.position.set(x, y + 1.5, z);
         scene.add(trunkMesh);
         const leaves = new THREE.ConeGeometry(2, 4, 32);
         const leaves_color = new THREE.MeshPhongMaterial({ color: 0x00FF00 });
         const leavesMesh = new THREE.Mesh(leaves, leaves_color);
-        leavesMesh.position.set(x, y + 4, z); // Adjust y position to place leaves on top of the trunk
+        leavesMesh.position.set(x, y + 4, z);
         scene.add(leavesMesh);
     }
     tree(3,0,20);
@@ -491,7 +491,6 @@ function objects2(x,y,z){
         objLoader1.load('large_building/large_buildingE.obj', (root) => {
             root.position.set(x,y,z);
             root.scale.set(10, 10, 10)
-            // root.rotation.y += Math.PI / 2;
             scene.add(root);
         });
     });
@@ -503,8 +502,7 @@ function objects2(x,y,z){
         objLoader2.setMaterials(mtl);
         objLoader2.load('large_building/large_buildingE.obj', (root) => {
             root.position.set(x-12,y,z);
-            root.scale.set(10, 10, 10)
-            // root.rotation.y += Math.PI / 2;
+            root.scale.set(10, 10, 10);
             scene.add(root);
         });
     });
@@ -516,8 +514,7 @@ function objects2(x,y,z){
         objLoader3.setMaterials(mtl);
         objLoader3.load('large_building/large_buildingE.obj', (root) => {
             root.position.set(x-24,y,z);
-            root.scale.set(10, 10, 10)
-            // root.rotation.y += Math.PI / 2;
+            root.scale.set(10, 10, 10);
             scene.add(root);
         });
     });
@@ -541,7 +538,7 @@ function basicShapes(){
     cylinderMesh2.position.set(-10, 10, -50);
 
     scene.add(cubeMesh, cylinderMesh, cylinderMesh2);
-    const textureLoader = new THREE.TextureLoader(); //texture cube
+    const textureLoader = new THREE.TextureLoader();
     const texture = textureLoader.load('./jpg/j.jpg');
     cubeMesh.material.map = texture;
     
@@ -550,15 +547,16 @@ function basicShapes(){
     light_source2.intensity=5;
     scene.add(light_source2);
 
-    const light_source3 = new THREE.PointLight(0x0000FF, 1, 100);
+    const light_source3 = new THREE.AmbientLight(0x0000FF, 1, 100);
     light_source3.position.set(-50, 0, 30);
-    light_source3.intensity=20;
+    light_source3.intensity=1;
     scene.add(light_source3);
 
-    const light_source4 = new THREE.PointLight(0x0000FF, 1, 100);
+    const light_source4 = new THREE.AmbientLight(0x0000FF, 1, 100);
     light_source4.position.set(-10, 10, -50);
-    light_source4.intensity=10;
+    light_source4.intensity=1;
     scene.add(light_source4);
+
 
     function animate() {//animated cube
         cubeMesh.rotation.x += 0.01;
@@ -589,11 +587,15 @@ function createMotorcycle() {
             }
         });
     });
-    console.log('making light')
-    motor_light_source = new THREE.PointLight(0xFFFFFF, 1, 100);
+    motor_light_source = new THREE.SpotLight(0xFFFFFF, 0.2);
     motor_light_source.position.set(8, 3, 8);
     motor_light_source.intensity = 5;
+    var targetObject = new THREE.Object3D();
+    targetObject.position.set(10, 5, 100);
+    scene.add(targetObject);
+    motor_light_source.target = targetObject;
     scene.add(motor_light_source);
+
 
     const cylinder = new THREE.CylinderGeometry(5, 0.5, 5, 32);
     const cylinderMaterial = new THREE.MeshBasicMaterial({ 
@@ -603,24 +605,18 @@ function createMotorcycle() {
     });
     motor_light_shape = new THREE.Mesh(cylinder, cylinderMaterial);
     motor_light_shape.position.set(8, 3, 9);
-    
-    // Rotate the cylinder 90 degrees around the Z-axis to lay it horizontally
     motor_light_shape.rotation.z = Math.PI / 2;
-    
-    // Then rotate it 90 degrees around the Y-axis to face the correct direction
     motor_light_shape.rotation.y = Math.PI / 2;
-    
     scene.add(motor_light_shape);
     
     
 }
 
-
-function animateMotorcycle(bool) {
+function animateMotorcycle() {
     if(isAnimatingMotorcycle==true){
     requestAnimationFrame(animateMotorcycle);
     if (root) {
-        root.position.z += 0.5; // Move the motorcycle along the road
+        root.position.z += 0.5;
         if (root.position.z > 100){
             root.position.z = -100;
         }
@@ -649,7 +645,3 @@ objects2(-3,0,67);
 objects2(-50,0,67);
 generate_world();
 createMotorcycle();
-
-
-
-
