@@ -153,7 +153,7 @@ function animateSphere(startPosX, startPosY, startPosZ, targetPosX, targetPosY, 
             requestAnimationFrame(updateSpherePosition);
             // console.log(time, duration)
         } else {
-            console.log('bruh')
+            // console.log('bruh')
             posX = targetPosX;
             posY = targetPosY;
             posZ = targetPosZ;
