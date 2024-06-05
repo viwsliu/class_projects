@@ -13,8 +13,6 @@ const scene = new THREE.Scene();
 let isAnimating = false;
 let isAnimatingMotorcycle = false;
 
-
-
 function main() {
     setup_UI_elements();
     const canvas = document.querySelector('#c');
@@ -25,8 +23,8 @@ function main() {
     const far = 500;
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     const controls = new OrbitControls(camera, renderer.domElement);
-    camera.position.set(-10, 15, 20);
-    controls.target.set(10, 10, 10); //redo this to 10,10,10
+    camera.position.set(-30, 20, -20);
+    controls.target.set(10, 10, 15); //redo this to 10,10,10
     controls.update();
     SphereUpdater(posX, posY, posZ);
     function render() {
@@ -117,7 +115,8 @@ function setup_UI_elements() {
         isAnimatingMotorcycle = false;
         animateMotorcycle();
     };
-    updateValues();
+    updateValues();   
+    
 }
 
 function animateOrbit() {
@@ -139,6 +138,7 @@ function animateOrbit() {
         const targetPosY = centerY;
         const targetPosZ = centerZ + orbitRadius * Math.sin(angle);
         animateSphere(startPosX, startPosY, startPosZ, targetPosX, targetPosY, targetPosZ);
+        
     }
 }
 
@@ -156,6 +156,7 @@ function animateSphere(startPosX, startPosY, startPosZ, targetPosX, targetPosY, 
             requestAnimationFrame(updateSpherePosition);
             // console.log(time, duration)
         } else {
+            console.log('bruh')
             posX = targetPosX;
             posY = targetPosY;
             posZ = targetPosZ;
@@ -175,6 +176,7 @@ function animateSphere(startPosX, startPosY, startPosZ, targetPosX, targetPosY, 
 }
 
 function SphereUpdater(posX, posY, posZ) { //updates pos for 'sun'
+    // console.log('SphereUpdater')
     if (sphereMesh) {
         scene.remove(sphereMesh);
         sphereMesh.geometry.dispose();
@@ -189,11 +191,6 @@ function SphereUpdater(posX, posY, posZ) { //updates pos for 'sun'
     sphereMesh = new THREE.Mesh(sphere, sphereMaterial);
     sphereMesh.position.set(posX, posY, posZ);
     scene.add(sphereMesh)
-
-    light_source = new THREE.PointLight(0xFFFFFF, 1, 100); // 0xFFFFFF is white
-    light_source.position.set(posX, posY, posZ);
-    light_source.intensity = 3;
-    scene.add(light_source);
 }
 
 
@@ -378,63 +375,61 @@ function generate_world(){
     tree(-10,0,-25);
     tree(-10,0,-15);
 
-
     tree(-15, 0, 25);
-tree(-28, 0, 5);
-tree(-13, 0, 10);
-tree(-22, 0, -8);
-tree(-10, 0, -12);
-tree(-8, 0, 18);
+    tree(-28, 0, 5);
+    tree(-13, 0, 10);
+    tree(-22, 0, -8);
+    tree(-10, 0, -12);
+    tree(-8, 0, 18);
 
-tree(-16, 0, 30);
-tree(-25, 0, -10);
-tree(-12, 0, -5);
-tree(-26, 0, 20);
-tree(-17, 0, -15);
-tree(-11, 0, 15);
+    tree(-16, 0, 30);
+    tree(-25, 0, -10);
+    tree(-12, 0, -5);
+    tree(-26, 0, 20);
+    tree(-17, 0, -15);
+    tree(-11, 0, 15);
 
-tree(-32, 0, -20);
-tree(-35, 0, -25);
-tree(-9, 0, 22);
-tree(-24, 0, 8);
-tree(-6, 0, -18);
-tree(-14, 0, -7);
+    tree(-32, 0, -20);
+    tree(-35, 0, -25);
+    tree(-9, 0, 22);
+    tree(-24, 0, 8);
+    tree(-6, 0, -18);
+    tree(-14, 0, -7);
 
-tree(-23, 0, 17);
-tree(-18, 0, 12);
-tree(-29, 0, -13);
-tree(-20, 0, 0);
-tree(-34, 0, 5);
-tree(-7, 0, -9);
+    tree(-23, 0, 17);
+    tree(-18, 0, 12);
+    tree(-29, 0, -13);
+    tree(-20, 0, 0);
+    tree(-34, 0, 5);
+    tree(-7, 0, -9);
 
-tree(-35, 0, 35);
-tree(-48, 0, 15);
-tree(-33, 0, 20);
-tree(-42, 0, 2);
-tree(-30, 0, -2);
-tree(-28, 0, 28);
+    tree(-35, 0, 35);
+    tree(-48, 0, 15);
+    tree(-33, 0, 20);
+    tree(-42, 0, 2);
+    tree(-30, 0, -2);
+    tree(-28, 0, 28);
 
-tree(-36, 0, 40);
-tree(-45, 0, 0);
-tree(-32, 0, 5);
-tree(-46, 0, 30);
-tree(-37, 0, -5);
-tree(-31, 0, 25);
+    tree(-36, 0, 40);
+    tree(-45, 0, 0);
+    tree(-32, 0, 5);
+    tree(-46, 0, 30);
+    tree(-37, 0, -5);
+    tree(-31, 0, 25);
 
-tree(-52, 0, -10);
-tree(-55, 0, -15);
-tree(-29, 0, 32);
-tree(-44, 0, 18);
-tree(-26, 0, -8);
-tree(-34, 0, 3);
+    tree(-52, 0, -10);
+    tree(-55, 0, -15);
+    tree(-29, 0, 32);
+    tree(-44, 0, 18);
+    tree(-26, 0, -8);
+    tree(-34, 0, 3);
 
-tree(-43, 0, 27);
-tree(-38, 0, 22);
-tree(-49, 0, -3);
-tree(-40, 0, 10);
-tree(-54, 0, 15);
-tree(-27, 0, 1);
-
+    tree(-43, 0, 27);
+    tree(-38, 0, 22);
+    tree(-49, 0, -3);
+    tree(-40, 0, 10);
+    tree(-54, 0, 15);
+    tree(-27, 0, 1);
 
     road(10,0,-100);
     road(10,0,0);
@@ -543,7 +538,7 @@ function basicShapes(){
 
     cubeMesh.position.set(-5, 5, 35);
     cylinderMesh.position.set(-50, 0, 30);
-    cylinderMesh2.position.set(0, 0, 0);
+    cylinderMesh2.position.set(-10, 10, -50);
 
     scene.add(cubeMesh, cylinderMesh, cylinderMesh2);
     const textureLoader = new THREE.TextureLoader(); //texture cube
@@ -557,8 +552,13 @@ function basicShapes(){
 
     const light_source3 = new THREE.PointLight(0x0000FF, 1, 100);
     light_source3.position.set(-50, 0, 30);
-    light_source3.intensity=5;
+    light_source3.intensity=20;
     scene.add(light_source3);
+
+    const light_source4 = new THREE.PointLight(0x0000FF, 1, 100);
+    light_source4.position.set(-10, 10, -50);
+    light_source4.intensity=10;
+    scene.add(light_source4);
 
     function animate() {//animated cube
         cubeMesh.rotation.x += 0.01;
@@ -569,6 +569,8 @@ function basicShapes(){
 }
 
 let root;
+let motor_light_source;
+let motor_light_shape;
 function createMotorcycle() {
     const objLoader = new OBJLoader();
     const mtlLoader = new MTLLoader();
@@ -583,10 +585,34 @@ function createMotorcycle() {
             scene.add(root);
             if (isAnimatingMotorcycle==true) {
                 animateMotorcycle();
-                isAnimatingMotorcycle = false; // Ensure animation starts only once
+                isAnimatingMotorcycle = false;
             }
         });
     });
+    console.log('making light')
+    motor_light_source = new THREE.PointLight(0xFFFFFF, 1, 100);
+    motor_light_source.position.set(8, 3, 8);
+    motor_light_source.intensity = 5;
+    scene.add(motor_light_source);
+
+    const cylinder = new THREE.CylinderGeometry(5, 0.5, 5, 32);
+    const cylinderMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0xFFFF00, 
+        transparent: true, 
+        opacity: 0.5
+    });
+    motor_light_shape = new THREE.Mesh(cylinder, cylinderMaterial);
+    motor_light_shape.position.set(8, 3, 9);
+    
+    // Rotate the cylinder 90 degrees around the Z-axis to lay it horizontally
+    motor_light_shape.rotation.z = Math.PI / 2;
+    
+    // Then rotate it 90 degrees around the Y-axis to face the correct direction
+    motor_light_shape.rotation.y = Math.PI / 2;
+    
+    scene.add(motor_light_shape);
+    
+    
 }
 
 
@@ -595,7 +621,21 @@ function animateMotorcycle(bool) {
     requestAnimationFrame(animateMotorcycle);
     if (root) {
         root.position.z += 0.5; // Move the motorcycle along the road
-        if (root.position.z > 100) root.position.z = -100; // Reset position
+        if (root.position.z > 100){
+            root.position.z = -100;
+        }
+    }
+    if (motor_light_source) {
+        motor_light_source.position.z +=0.5;
+        if (motor_light_source.position.z > 100){
+            motor_light_source.position.z = -100;
+        }
+    }
+    if (motor_light_shape) {
+        motor_light_shape.position.z +=0.5;
+        if (motor_light_shape.position.z > 100){
+            motor_light_shape.position.z = -100;
+        }
     }
 }
 }
