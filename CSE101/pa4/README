@@ -1,0 +1,16 @@
+Vincent Liu
+viwliu@ucsc.edu
+1915968
+CSE101-01, Spring 2023
+pa4
+
+Files in Directory:
+List.c - Contains the functions for the List ADT module 
+List.h - Headerfile that contains the functions for the List ADT module interface
+ListTest.c - Test made by me to test List.c
+Matrix.c - Contain functions
+Matrix.h - Headerfile for Matrix for pa4
+MatrixTest.c - Test file for functions within Matrix.c
+Sparse.c - Main file used for pa4
+Makefile - Creates executable(s) and associated object files
+README - README

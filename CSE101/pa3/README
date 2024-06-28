@@ -1,0 +1,15 @@
+Vincent Liu
+viwliu@ucsc.edu
+1915968
+CSE101-01, Spring 2023
+pa3
+
+Files in Directory:
+List.c - Contains the functions for the List ADT module 
+List.h - Headerfile that contains the functions for the List ADT module interface
+Graph.c - Contains the functions for the Graph ADT for pa3
+Graph.h - Headerfile for Graph ADT for pa3
+GraphTest - Test file for Graph.c
+FindComponents.c - Main file used for pa3
+Makefile - Creates executable(s) and associated object files
+README - README

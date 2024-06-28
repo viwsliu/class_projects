@@ -1,0 +1,16 @@
+Vincent Liu
+viwliu@ucsc.edu
+1915968
+CSE101-01, Spring 2023
+pa6
+
+Files in Directory:
+Arithmetic.cpp - Top level client for pa6
+BigInteger.cpp - BigInteger implementation file
+BigInteger.h - Header file for BigInteger.cpp
+BigIntegerTest.cpp - Test for BigInteger.cpp
+List.cpp - Contains the functions for the List ADT module 
+List.h - Headerfile that contains the functions for the List ADT module interface
+ListTest.cpp - Test made by me to test List.cpp
+Makefile - Creates executable(s) and associated object files
+README - README

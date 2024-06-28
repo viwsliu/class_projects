@@ -1,0 +1,29 @@
+# pa1
+
+Vincent Liu<br>
+CruzID: viwliu<br>
+ID: #1915968<br>
+CSE101-01, Spring 2023<br>
+
+## Files
+<ol>
+<li>List.c</li>
+
+Contains the functions for the List ADT module<br>
+
+<li>List.h</li>
+
+Headerfile that contains the functions for the List ADT module interface<br>
+
+<li>ListTest.c</li>
+
+Used to test List.c and Lex.c<br>
+
+<li>Lex.c</li>
+
+Main file used to create and run the List ADT module<br>
+
+<li>Makefile</li>
+
+Used to create executables,necessary object files, as well as clean directory<br>
+</ol>

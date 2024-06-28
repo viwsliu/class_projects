@@ -1,0 +1,13 @@
+Vincent Liu
+viwliu@ucsc.edu
+1915968
+CSE101-01, Spring 2023
+pa7
+
+Files in Directory:
+Dictionary.cpp - Dictionary implementation file
+Dictionary.h - Header file for Dictionary.cpp
+DictionaryTest.cpp - Test file for Dictionary functions
+Order.cpp - Main file/client for pa7
+Makefile - Creates executable(s) and associated object files
+README - README

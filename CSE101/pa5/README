@@ -1,0 +1,13 @@
+Vincent Liu
+viwliu@ucsc.edu
+1915968
+CSE101-01, Spring 2023
+pa5
+
+Files in Directory:
+List.cpp - Contains the functions for the List ADT module 
+List.h - Headerfile that contains the functions for the List ADT module interface
+ListTest.cpp - Test made by me to test List.cpp
+Shuffle.cpp - Main file used for pa5
+Makefile - Creates executable(s) and associated object files
+README - README
