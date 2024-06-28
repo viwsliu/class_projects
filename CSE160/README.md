@@ -1,4 +1,4 @@
-Introdiction to Computer Graphics <br>
+Introduction to Computer Graphics <br>
 Course assignment code & Live hosting links <br>
 
 [Assignment 0 Live Page](https://vincentl03.github.io/CSE160-Live/Assignment_0/asg0.html) <br>
