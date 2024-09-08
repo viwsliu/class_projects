@@ -4,15 +4,13 @@ import random
 def passwordGenerator():
   length = int(input("Please type in the desired length of your password: "))
   print(
-    '''Choose character set for password from these : 
+    '''Choose character set(s) to include in password : 
     1. Letters
     2. Digits
     3. Special characters
     4. Exit'''
     )
-  
   characterList = ""
-
   while(True):
       choice = int(input("Pick a number: "))
       if(choice == 1):
@@ -25,9 +23,7 @@ def passwordGenerator():
           break
       else:
           print("Please pick a valid option!")
-
   password = []
-
   for i in range(length):
       randomchar = random.choice(characterList)
       password.append(randomchar)
@@ -36,15 +32,22 @@ def passwordGenerator():
   askSave(password)
 
 def askSave(password):
-  choice = input("Would you like to save this password? (Yes/No): ")
-  choice = choice.lower()
-  if(choice == "yes"):
-    filename = 'test'
-    print('Saved into file:', filename)
-    #do stuff save into text file
-  else:
-    print("Password NOT Saved!")
-    return
+  while (True):
+    choice = input("Would you like to save this password? (Yes/No): ")
+    choice = choice.lower()
+    if(choice == "yes" or choice == "y"):
+      output = ''
+      for i in password:
+         output = output + i
+      with open('test.txt', 'a') as file:
+        file.write(output + '\n')
+      print('Saved into file: test.txt')
+      break
+    elif(choice == "n" or choice == "no"):
+      print("Password NOT Saved!")
+      break
+    else:
+       print("Please type 'yes' or 'no'")
 
 
 passwordGenerator()
