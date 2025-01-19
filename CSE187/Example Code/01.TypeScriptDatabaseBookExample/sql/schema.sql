@@ -1,3 +1,0 @@
-DROP TABLE IF EXISTS book;
-
-CREATE TABLE book(isbn VARCHAR(16) PRIMARY KEY, data jsonb);
