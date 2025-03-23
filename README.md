@@ -1,5 +1,5 @@
 # Class Projects / Personal Projects
-This folder contains all projects made during college (2017-2024) <br>
+This repository contains projects made during college (2017-2024) <br>
 
 Associated Projects:<br>
 Cognoso: [https://github.com/andychenbruce/COGNOSO] <br>
