@@ -1,3 +1,0 @@
-type in the console "npm run dev" to run, then click the localhost link provided
-
-to end the process, go to the console and do ctrl+d or ctrl+c
