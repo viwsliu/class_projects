@@ -1,7 +1,7 @@
 # Class Projects / Assignments
 This repository contains projects made during college (2021-2024) <br>
 
-Personal Projects:
+Personal Projects: <br>
 Cryptography Implementations: [https://github.com/viwsliu/cryptography_projects] <br>
 
 Associated Projects:<br>
