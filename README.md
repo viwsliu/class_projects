@@ -2,6 +2,7 @@
 This repository contains projects made during college (2021-2024) <br>
 
 Personal Projects: <br>
+Highschool Projects: [https://github.com/viwsliu/HS_projects] <br>
 Cryptography Implementations: [https://github.com/viwsliu/cryptography_projects] <br>
 
 Associated Projects:<br>
